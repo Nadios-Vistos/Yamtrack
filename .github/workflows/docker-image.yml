@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - "dev"
+      - "sosoblue"
     tags:
       - "v*"
   pull_request:
@@ -166,6 +167,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ github.ref_name == 'sosoblue' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
           build-args: |
             VERSION=${{ steps.get-version.outputs.VERSION }}
