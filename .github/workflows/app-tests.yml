@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - dev
+      - sosoblue
   workflow_dispatch:
 
 permissions:
