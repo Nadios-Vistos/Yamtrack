@@ -23,6 +23,7 @@
 
     {% block extra_head %}
     {% endblock extra_head %}
+    {% include "sosoblue/head.html" %}
 
     <link rel="stylesheet"
           type="text/css"
@@ -190,6 +191,7 @@
                       <span>{% trans "Calendar" %}</span>
                     </a>
                   </li>
+                  {% include "sosoblue/sidebar_links.html" %}
                 </ul>
               </div>
             {% endblock sidebar_utilities %}

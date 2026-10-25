@@ -1,0 +1,9 @@
+{% load sosoblue_tags %}
+{% series_state item as state %}
+{% if state %}
+  <div class="sb-card-state sb-{{ state }}{% if media.repeats > 1 %} sb-raise{% endif %}"
+       title="{{ state|series_state_label }}">
+    <span class="sb-dot"></span>
+    <span class="sb-card-label">{{ state|series_state_label }}</span>
+  </div>
+{% endif %}

@@ -1,0 +1,1 @@
+{% load i18n %}{% if show.next_episode %}{% blocktrans with season=show.next_season episode=show.next_episode %}S{{ season }} E{{ episode }}{% endblocktrans %}{% else %}{% blocktrans with season=show.next_season %}Season {{ season }}{% endblocktrans %}{% endif %}

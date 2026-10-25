@@ -148,6 +148,7 @@
           {% for genre in media.genres %}
             <span class="px-3 py-1 bg-violet-600 text-white rounded-full text-sm">{{ genre }}</span>
           {% endfor %}
+          {% if media.media_type == MediaTypes.TV.value %}{% include "sosoblue/state_badge.html" with state=media.details.status %}{% endif %}
         </div>
 
         {# Description #}

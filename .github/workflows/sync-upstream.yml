@@ -100,7 +100,7 @@ jobs:
       - name: Run tests
         if: steps.merge.outputs.changed == 'true'
         timeout-minutes: 30
-        run: uv run src/manage.py test app users integrations lists events --parallel
+        run: uv run src/manage.py test app users integrations lists events sosoblue --parallel
 
       - name: Push sosoblue
         if: steps.merge.outputs.changed == 'true'

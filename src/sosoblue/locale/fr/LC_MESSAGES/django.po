@@ -1,0 +1,104 @@
+# French translation of the SosoBlue additions to Yamtrack.
+# This file is distributed under the same license as the Yamtrack package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Yamtrack SosoBlue\n"
+"POT-Creation-Date: 2026-10-25 13:12+0100\n"
+"PO-Revision-Date: 2026-10-25 13:30+0100\n"
+"Last-Translator: Nicolas (Nadios-Vistos)\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: models.py:10
+msgctxt "tv show state"
+msgid "Ongoing series"
+msgstr "Série en cours"
+
+#: models.py:11
+msgctxt "tv show state"
+msgid "In production"
+msgstr "En production"
+
+#: models.py:12
+msgctxt "tv show state"
+msgid "Series ended"
+msgstr "Série terminée"
+
+#: models.py:13
+msgctxt "tv show state"
+msgid "Series canceled"
+msgstr "Série annulée"
+
+#: templates/sosoblue/episode_label.html:1
+#, python-format
+msgid "S%(season)s E%(episode)s"
+msgstr "S%(season)s E%(episode)s"
+
+#: templates/sosoblue/episode_label.html:1
+#, python-format
+msgid "Season %(season)s"
+msgstr "Saison %(season)s"
+
+#: templates/sosoblue/sidebar_links.html:11 templates/sosoblue/waiting.html:5
+#: templates/sosoblue/waiting.html:11
+msgid "Up next"
+msgstr "À suivre"
+
+#: templates/sosoblue/waiting.html:12
+msgid "Series you are up to date on, waiting for new episodes."
+msgstr ""
+"Les séries sur lesquelles vous êtes à jour, en attente de nouveaux épisodes."
+
+#: templates/sosoblue/waiting.html:18
+msgid "Refresh statuses"
+msgstr "Actualiser les statuts"
+
+#: templates/sosoblue/waiting.html:25
+#, python-format
+msgid ""
+"The status of %(counter)s series has not been fetched yet. It is updated "
+"every day, or now with the refresh button."
+msgid_plural ""
+"The status of %(counter)s series has not been fetched yet. It is updated "
+"every day, or now with the refresh button."
+msgstr[0] ""
+"Le statut de %(counter)s série n'a pas encore été récupéré. Il est mis à "
+"jour chaque jour, ou tout de suite avec le bouton d'actualisation."
+msgstr[1] ""
+"Le statut de %(counter)s séries n'a pas encore été récupéré. Il est mis à "
+"jour chaque jour, ou tout de suite avec le bouton d'actualisation."
+
+#: templates/sosoblue/waiting.html:30
+msgid "Next episode announced"
+msgstr "Prochain épisode annoncé"
+
+#: templates/sosoblue/waiting.html:40
+#, python-format
+msgid "in %(delay)s"
+msgstr "dans %(delay)s"
+
+#: templates/sosoblue/waiting.html:46
+msgid "No release date announced for your series yet."
+msgstr "Aucune date de sortie annoncée pour vos séries pour l'instant."
+
+#: templates/sosoblue/waiting.html:51
+msgid "Coming back, date unknown"
+msgstr "Suite confirmée, date inconnue"
+
+#: templates/sosoblue/waiting.html:68
+msgid "None of your up-to-date series has been renewed yet."
+msgstr "Aucune de vos séries à jour n'a encore été renouvelée."
+
+#: templates/sosoblue/waiting.html:74
+msgid "Status not fetched yet"
+msgstr "Statut pas encore récupéré"
+
+#: views.py:28
+msgid "Series statuses are being refreshed. Reload the page in a minute."
+msgstr ""
+"Les statuts des séries sont en cours d'actualisation. Rechargez la page dans"
+" une minute."

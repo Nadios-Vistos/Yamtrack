@@ -1,0 +1,6 @@
+{% load sosoblue_tags %}
+{% with series_state=state|tmdb_series_state %}
+  {% if series_state %}
+    <span class="sb-badge sb-{{ series_state }}"><span class="sb-dot"></span>{{ series_state|series_state_label }}</span>
+  {% endif %}
+{% endwith %}

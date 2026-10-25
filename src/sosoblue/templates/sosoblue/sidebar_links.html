@@ -1,0 +1,13 @@
+{% load i18n app_tags %}
+{% url 'sosoblue:waiting' as waiting_url %}
+<li>
+  <a href="{{ waiting_url }}"
+     class="flex items-center space-x-3 px-4 py-2 rounded-md transition-colors duration-200 text-sm {% if request.path == waiting_url %}text-white bg-[#2c3136]{% else %}text-gray-400 hover:text-white hover:bg-[#23272b]{% endif %}">
+    {% if request.path|str_equals:waiting_url %}
+      {% include "app/icons/alarm-clock.svg" with classes="w-5 h-5 text-indigo-400 " %}
+    {% else %}
+      {% include "app/icons/alarm-clock.svg" with classes="w-5 h-5" %}
+    {% endif %}
+    <span>{% trans "Up next" %}</span>
+  </a>
+</li>

@@ -120,6 +120,7 @@ INSTALLED_APPS = [
     "integrations",
     "lists",
     "users",
+    "sosoblue",
     "debug_toolbar",
     "django_celery_beat",
     "django_celery_results",

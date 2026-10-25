@@ -1,0 +1,54 @@
+from django import template
+
+from app.models import MediaTypes, Sources
+from sosoblue import series
+from sosoblue.models import SeriesState, state_from_tmdb
+
+register = template.Library()
+
+_CACHE_ATTR = "_sosoblue_series_states"
+
+
+def _value(obj, name):
+    if isinstance(obj, dict):
+        return obj.get(name)
+    return getattr(obj, name, None)
+
+
+@register.simple_tag(takes_context=True)
+def series_state(context, item):
+    """Return the SeriesState of a TMDB TV item, or None.
+
+    The statuses are loaded once per request, so a page full of cards costs
+    a single query.
+    """
+    if (
+        _value(item, "media_type") != MediaTypes.TV.value
+        or _value(item, "source") != Sources.TMDB.value
+    ):
+        return None
+
+    request = context.get("request")
+    states = getattr(request, _CACHE_ATTR, None) if request is not None else None
+    if states is None:
+        states = series.status_map()
+        if request is not None:
+            setattr(request, _CACHE_ATTR, states)
+    return states.get(str(_value(item, "media_id")))
+
+
+@register.filter
+def tmdb_series_state(tmdb_status):
+    """Return the SeriesState matching a raw TMDB status (or a SeriesState)."""
+    if tmdb_status in SeriesState.values:
+        return SeriesState(tmdb_status)
+    return state_from_tmdb(tmdb_status)
+
+
+@register.filter
+def series_state_label(state):
+    """Return the translated label of a SeriesState."""
+    try:
+        return SeriesState(state).label
+    except ValueError:
+        return ""

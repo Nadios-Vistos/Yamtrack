@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load i18n app_tags %}
+
+{% block title %}
+  {% trans "Up next" %} - YamTrack
+{% endblock title %}
+
+{% block content %}
+  <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold mb-2">{% trans "Up next" %}</h1>
+      <p class="text-gray-400">{% trans "Series you are up to date on, waiting for new episodes." %}</p>
+    </div>
+    <form method="post" action="{% url 'sosoblue:refresh_status' %}">
+      {% csrf_token %}
+      <button class="px-4 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors flex items-center gap-2 cursor-pointer">
+        {% include "app/icons/circle-spinning-clockwise.svg" with classes="w-4 h-4" %}
+        <span>{% trans "Refresh statuses" %}</span>
+      </button>
+    </form>
+  </div>
+
+  {% if missing_status %}
+    <div class="bg-[#2a2f35] rounded-lg p-4 mb-6 text-sm text-gray-300">
+      {% blocktrans count counter=missing_status %}The status of {{ counter }} series has not been fetched yet. It is updated every day, or now with the refresh button.{% plural %}The status of {{ counter }} series has not been fetched yet. It is updated every day, or now with the refresh button.{% endblocktrans %}
+    </div>
+  {% endif %}
+
+  <section class="sb-section">
+    <h2 class="text-xl font-bold mb-4">{% trans "Next episode announced" %}</h2>
+    {% if dated %}
+      <div class="media-grid">
+        {% for show in dated %}
+          <div>
+            {% include "app/components/media_card.html" with media=show.tv item=show.item title=show.item from_grid=True %}
+            <span class="sb-next">
+              <strong>{% include "sosoblue/episode_label.html" %}</strong>
+              · {{ show.next_datetime|date_format:user }}
+              <br>
+              <span class="text-gray-400">{% blocktrans with delay=show.next_datetime|timeuntil %}in {{ delay }}{% endblocktrans %}</span>
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-400">{% trans "No release date announced for your series yet." %}</p>
+    {% endif %}
+  </section>
+
+  <section class="sb-section">
+    <h2 class="text-xl font-bold mb-4">{% trans "Coming back, date unknown" %}</h2>
+    {% if undated %}
+      <div class="media-grid">
+        {% for show in undated %}
+          <div>
+            {% include "app/components/media_card.html" with media=show.tv item=show.item title=show.item from_grid=True %}
+            {% if show.next_season %}
+              <span class="sb-next">
+                <strong>{% include "sosoblue/episode_label.html" %}</strong>
+              </span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-400">{% trans "None of your up-to-date series has been renewed yet." %}</p>
+    {% endif %}
+  </section>
+
+  {% if unknown %}
+    <section class="sb-section">
+      <h2 class="text-xl font-bold mb-4">{% trans "Status not fetched yet" %}</h2>
+      <div class="media-grid">
+        {% for show in unknown %}
+          <div>
+            {% include "app/components/media_card.html" with media=show.tv item=show.item title=show.item from_grid=True %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endblock content %}
