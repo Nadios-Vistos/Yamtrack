@@ -1,0 +1,9 @@
+{% load i18n %}
+<div class="bg-[#2a2f35] rounded-lg p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div>
+    <h2 class="text-xl font-semibold mb-1">{% trans "Netflix, Prime Video and Plex" %}</h2>
+    <p class="text-gray-400 text-sm">{% trans "Import a viewing history with a review of what was recognised." %}</p>
+  </div>
+  <a href="{% url 'sosoblue:history_list' %}"
+     class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors whitespace-nowrap">{% trans "Import a viewing history" %}</a>
+</div>

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Import a viewing history" %} - YamTrack
+{% endblock title %}
+
+{% block content %}
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">{% trans "Import a viewing history" %}</h1>
+    <p class="text-gray-400">{% trans "Netflix, Prime Video or Plex: the titles are matched with TMDB, you check the result, then it is imported. Episodes already marked are never added twice." %}</p>
+  </div>
+
+  {% if targets|length > 1 %}
+    <div class="bg-[#2a2f35] rounded-lg p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
+      <label for="sb-target" class="text-sm text-gray-300">{% trans "Import into the account of" %}</label>
+      <select id="sb-target"
+              class="bg-[#39404b] rounded-md px-3 py-2 text-sm"
+              onchange="document.querySelectorAll('.sb-target-input').forEach(function (input) { input.value = this.value; }, this)">
+        {% for member in targets %}
+          <option value="{{ member.id }}" {% if member.id == user.id %}selected{% endif %}>{{ member.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+
+  <div class="sb-columns sb-section">
+    {# Netflix #}
+    <form method="post"
+          action="{% url 'sosoblue:history_start' %}"
+          enctype="multipart/form-data"
+          class="bg-[#2a2f35] rounded-lg p-4 flex flex-col gap-3">
+      {% csrf_token %}
+      <input type="hidden" name="source" value="netflix">
+      <input type="hidden" name="user" value="{{ user.id }}" class="sb-target-input">
+      <h2 class="text-lg font-semibold">Netflix</h2>
+      <p class="text-sm text-gray-400">
+        {% blocktrans trimmed %}
+          On netflix.com, open the profile, then Account → Profiles → Viewing activity, and click "Download all" at the bottom. You get NetflixViewingHistory.csv.
+        {% endblocktrans %}
+      </p>
+      <input type="file" name="file" accept=".csv" required class="text-sm text-gray-300">
+      <button class="mt-auto px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors cursor-pointer">{% trans "Analyse" %}</button>
+    </form>
+
+    {# Prime Video #}
+    <form method="post"
+          action="{% url 'sosoblue:history_start' %}"
+          enctype="multipart/form-data"
+          class="bg-[#2a2f35] rounded-lg p-4 flex flex-col gap-3">
+      {% csrf_token %}
+      <input type="hidden" name="source" value="prime">
+      <input type="hidden" name="user" value="{{ user.id }}" class="sb-target-input">
+      <h2 class="text-lg font-semibold">Prime Video</h2>
+      <p class="text-sm text-gray-400">
+        {% blocktrans trimmed %}
+          The CSV produced by the export script on the Prime Video history page (watch-history-export-….csv).
+        {% endblocktrans %}
+      </p>
+      <input type="file" name="file" accept=".csv" required class="text-sm text-gray-300">
+      <button class="mt-auto px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors cursor-pointer">{% trans "Analyse" %}</button>
+    </form>
+
+    {# Plex #}
+    <form method="post"
+          action="{% url 'sosoblue:history_start' %}"
+          class="bg-[#2a2f35] rounded-lg p-4 flex flex-col gap-3">
+      {% csrf_token %}
+      <input type="hidden" name="source" value="plex">
+      <input type="hidden" name="user" value="{{ user.id }}" class="sb-target-input">
+      <h2 class="text-lg font-semibold">Plex</h2>
+      <p class="text-sm text-gray-400">
+        {% blocktrans trimmed %}
+          The server keeps the history of each Plex profile. To find the token: in Plex, open any movie, ⋯ → Get Info → View XML, and copy what follows X-Plex-Token= in the address bar.
+        {% endblocktrans %}
+      </p>
+      <input type="url"
+             name="plex_url"
+             required
+             placeholder="http://192.168.1.10:32400"
+             class="bg-[#39404b] rounded-md px-3 py-2 text-sm">
+      <input type="password"
+             name="plex_token"
+             required
+             autocomplete="off"
+             placeholder="{% trans 'Plex token' %}"
+             class="bg-[#39404b] rounded-md px-3 py-2 text-sm">
+      <button type="button"
+              class="px-4 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors cursor-pointer"
+              hx-post="{% url 'sosoblue:plex_accounts' %}"
+              hx-include="closest form"
+              hx-target="#sb-plex-accounts">{% trans "Show the profiles" %}</button>
+      <div id="sb-plex-accounts"></div>
+    </form>
+  </div>
+
+  {% if imports %}
+    <section class="sb-section">
+      <h2 class="text-xl font-bold mb-4">{% trans "Previous imports" %}</h2>
+      <div class="bg-[#2a2f35] rounded-lg divide-y divide-white/5">
+        {% for history_import in imports %}
+          <a href="{% url 'sosoblue:history_detail' history_import.id %}"
+             class="flex items-center justify-between gap-3 px-4 py-3 hover:bg-[#39404b] transition-colors">
+            <div class="min-w-0">
+              <p class="text-sm font-medium">{{ history_import.get_source_display }} · {{ history_import.user.first_name|default:history_import.user.username }}</p>
+              <p class="text-xs text-gray-400 truncate">{{ history_import.created_at|date:"SHORT_DATETIME_FORMAT" }}{% if history_import.file_name %} · {{ history_import.file_name }}{% endif %}</p>
+            </div>
+            <span class="sb-status sb-status-{{ history_import.status }}">{{ history_import.get_status_display }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endblock content %}

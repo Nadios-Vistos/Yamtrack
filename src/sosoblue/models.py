@@ -106,3 +106,121 @@ class ContentRating(models.Model):
     def __str__(self):
         """Return the media and its rating."""
         return f"{self.media_type} {self.media_id}: {self.certification or '?'}"
+
+
+class HistorySource(models.TextChoices):
+    """Where a viewing history comes from."""
+
+    NETFLIX = "netflix", "Netflix"
+    PRIME = "prime", "Prime Video"
+    PLEX = "plex", "Plex"
+
+
+class HistoryImportStatus(models.TextChoices):
+    """Steps of a history import."""
+
+    MATCHING = "matching", pgettext_lazy("history import status", "Matching")
+    REVIEW = "review", pgettext_lazy("history import status", "To review")
+    IMPORTING = "importing", pgettext_lazy("history import status", "Importing")
+    DONE = "done", pgettext_lazy("history import status", "Imported")
+    FAILED = "failed", pgettext_lazy("history import status", "Failed")
+
+
+class HistoryImport(models.Model):
+    """A viewing history being matched, reviewed and imported for a user."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="history_imports",
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="+",
+    )
+    source = models.CharField(max_length=10, choices=HistorySource.choices)
+    status = models.CharField(
+        max_length=10,
+        choices=HistoryImportStatus.choices,
+        default=HistoryImportStatus.MATCHING,
+    )
+    file_name = models.CharField(max_length=255, blank=True, default="")
+    raw_data = models.TextField(blank=True, default="")
+    plex_url = models.CharField(max_length=255, blank=True, default="")
+    plex_token = models.CharField(max_length=255, blank=True, default="")
+    plex_account = models.CharField(max_length=255, blank=True, default="")
+    progress = models.PositiveIntegerField(default=0)
+    total = models.PositiveIntegerField(default=0)
+    error = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        """Meta options for the model."""
+
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        """Return the source, the user and the date."""
+        return f"{self.get_source_display()} - {self.user} - {self.created_at:%Y-%m-%d}"
+
+
+class ImportGroup(models.Model):
+    """The lines of an import that belong to one show or movie."""
+
+    history_import = models.ForeignKey(
+        HistoryImport,
+        on_delete=models.CASCADE,
+        related_name="groups",
+    )
+    kind = models.CharField(max_length=10)  # tv or movie, as guessed
+    name = models.CharField(max_length=500)
+    media_type = models.CharField(max_length=10, blank=True, default="")
+    media_id = models.CharField(max_length=36, blank=True, default="")
+    media_title = models.CharField(max_length=500, blank=True, default="")
+    media_image = models.URLField(max_length=500, blank=True, default="")
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
+    above_limit = models.BooleanField(default=False)
+    selected = models.BooleanField(default=True)
+
+    class Meta:
+        """Meta options for the model."""
+
+        ordering = ["name"]
+
+    def __str__(self):
+        """Return the group name and its match."""
+        return f"{self.name} -> {self.media_title or '?'}"
+
+
+class ImportLine(models.Model):
+    """One viewing from the history."""
+
+    MATCHED = "matched"
+    UNMATCHED = "unmatched"
+    IMPORTED = "imported"
+    EXISTING = "existing"
+    COVERED = "covered"  # unmatched, but its whole season was watched
+
+    group = models.ForeignKey(
+        ImportGroup, on_delete=models.CASCADE, related_name="lines"
+    )
+    raw = models.CharField(max_length=1000)
+    season = models.PositiveIntegerField(null=True, blank=True)
+    episode_title = models.CharField(max_length=500, blank=True, default="")
+    episode_hint = models.PositiveIntegerField(null=True, blank=True)
+    watched_at = models.DateTimeField()
+    matched_season = models.PositiveIntegerField(null=True, blank=True)
+    matched_episode = models.PositiveIntegerField(null=True, blank=True)
+    state = models.CharField(max_length=10, default=UNMATCHED)
+
+    class Meta:
+        """Meta options for the model."""
+
+        ordering = ["watched_at"]
+
+    def __str__(self):
+        """Return the raw line."""
+        return self.raw

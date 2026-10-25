@@ -1,0 +1,18 @@
+{% load i18n %}
+{% if error %}
+  <p class="text-sm text-red-400">{{ error }}</p>
+{% elif accounts %}
+  <div class="flex flex-col gap-3">
+    <label class="text-sm text-gray-300" for="sb-plex-account">{% trans "Plex profile to import" %}</label>
+    <select id="sb-plex-account"
+            name="plex_account"
+            class="bg-[#39404b] rounded-md px-3 py-2 text-sm"
+            onchange="this.form.plex_account_name.value = this.options[this.selectedIndex].text">
+      {% for account_id, name in accounts %}<option value="{{ account_id }}">{{ name }}</option>{% endfor %}
+    </select>
+    <input type="hidden" name="plex_account_name" value="{{ accounts.0.1 }}">
+    <button class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors cursor-pointer">{% trans "Analyse" %}</button>
+  </div>
+{% else %}
+  <p class="text-sm text-gray-400">{% trans "No profile found on this server." %}</p>
+{% endif %}

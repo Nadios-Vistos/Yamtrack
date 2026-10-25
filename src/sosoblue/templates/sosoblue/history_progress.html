@@ -1,0 +1,18 @@
+{% load i18n %}
+<div class="bg-[#2a2f35] rounded-lg p-6"
+     hx-get="{% url 'sosoblue:history_detail' history_import.id %}?progress=1"
+     hx-trigger="every 2s"
+     hx-swap="outerHTML">
+  <p class="font-medium mb-2">
+    {% if history_import.status == Status.MATCHING %}
+      {% trans "Matching the titles with TMDB…" %}
+    {% else %}
+      {% trans "Importing…" %}
+    {% endif %}
+  </p>
+  <p class="text-sm text-gray-400 mb-3">
+    {% if history_import.total %}{{ history_import.progress }} / {{ history_import.total }}{% else %}{% trans "Reading the history…" %}{% endif %}
+  </p>
+  <div class="sb-bar"><div style="width: {% widthratio history_import.progress history_import.total|default:1 100 %}%"></div></div>
+  <p class="text-xs text-gray-400 mt-3">{% trans "You can leave this page, it carries on in the background." %}</p>
+</div>

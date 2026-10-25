@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 13:59+0100\n"
+"POT-Creation-Date: 2026-10-25 16:42+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -34,6 +34,31 @@ msgctxt "tv show state"
 msgid "Series canceled"
 msgstr "Série annulée"
 
+#: models.py:122
+msgctxt "history import status"
+msgid "Matching"
+msgstr "Analyse en cours"
+
+#: models.py:123
+msgctxt "history import status"
+msgid "To review"
+msgstr "À vérifier"
+
+#: models.py:124
+msgctxt "history import status"
+msgid "Importing"
+msgstr "Import en cours"
+
+#: models.py:125
+msgctxt "history import status"
+msgid "Imported"
+msgstr "Importé"
+
+#: models.py:126
+msgctxt "history import status"
+msgid "Failed"
+msgstr "Échec"
+
 #: templates/sosoblue/episode_label.html:1
 #: templates/sosoblue/household.html:38 templates/sosoblue/household.html:87
 #, python-format
@@ -44,6 +69,210 @@ msgstr "S%(season)s E%(episode)s"
 #, python-format
 msgid "Season %(season)s"
 msgstr "Saison %(season)s"
+
+#: templates/sosoblue/history_detail.html:5
+#: templates/sosoblue/history_detail.html:10
+#: templates/sosoblue/history_list.html:5
+#: templates/sosoblue/history_list.html:10
+#: templates/sosoblue/import_banner.html:8
+msgid "Import a viewing history"
+msgstr "Importer un historique"
+
+#: templates/sosoblue/history_detail.html:22
+msgid "The history could not be read."
+msgstr "L'historique n'a pas pu être lu."
+
+#: templates/sosoblue/history_detail.html:29
+#, python-format
+msgid "%(counter)s title found."
+msgid_plural "%(counter)s titles found."
+msgstr[0] "%(counter)s titre trouvé."
+msgstr[1] "%(counter)s titres trouvés."
+
+#: templates/sosoblue/history_detail.html:30
+msgid ""
+"Check the ones at the top (not found, unrecognised episodes or above the age"
+" limit), correct them with a TMDB link or leave them out, then import."
+msgstr ""
+"Vérifiez ceux du haut (introuvables, épisodes non reconnus ou au-dessus de "
+"la limite d'âge), corrigez-les avec un lien TMDB ou laissez-les de côté, "
+"puis importez."
+
+#: templates/sosoblue/history_detail.html:34
+msgid "Import the selection"
+msgstr "Importer la sélection"
+
+#: templates/sosoblue/history_detail.html:38
+#, python-format
+msgid "%(counter)s view added"
+msgid_plural "%(counter)s views added"
+msgstr[0] "%(counter)s visionnage ajouté"
+msgstr[1] "%(counter)s visionnages ajoutés"
+
+#: templates/sosoblue/history_detail.html:39
+#: templates/sosoblue/history_group.html:36
+#, python-format
+msgid "%(counter)s already there"
+msgid_plural "%(counter)s already there"
+msgstr[0] "%(counter)s déjà présent"
+msgstr[1] "%(counter)s déjà présents"
+
+#: templates/sosoblue/history_detail.html:41
+#, python-format
+msgid "%(counter)s title left out."
+msgid_plural "%(counter)s titles left out."
+msgstr[0] "%(counter)s titre laissé de côté."
+msgstr[1] "%(counter)s titres laissés de côté."
+
+#: templates/sosoblue/history_detail.html:46
+msgid "Delete this report"
+msgstr "Supprimer ce rapport"
+
+#: templates/sosoblue/history_group.html:7
+msgid "Leave out"
+msgstr "Laisser de côté"
+
+#: templates/sosoblue/history_group.html:7
+msgid "Include"
+msgstr "Inclure"
+
+#: templates/sosoblue/history_group.html:25
+msgid "Not found on TMDB"
+msgstr "Introuvable sur TMDB"
+
+#: templates/sosoblue/history_group.html:27
+#: templates/sosoblue/household.html:43
+msgid "Movie"
+msgstr "Film"
+
+#: templates/sosoblue/history_group.html:27
+msgid "Series"
+msgstr "Série"
+
+#: templates/sosoblue/history_group.html:31
+#, python-format
+msgid "In the history: %(name)s"
+msgstr "Dans l'historique : %(name)s"
+
+#: templates/sosoblue/history_group.html:35
+#, python-format
+msgid "%(counter)s added"
+msgid_plural "%(counter)s added"
+msgstr[0] "%(counter)s ajouté"
+msgstr[1] "%(counter)s ajoutés"
+
+#: templates/sosoblue/history_group.html:38
+#, python-format
+msgid "Watched %(counter)s time"
+msgid_plural "Watched %(counter)s times"
+msgstr[0] "Vu %(counter)s fois"
+msgstr[1] "Vu %(counter)s fois"
+
+#: templates/sosoblue/history_group.html:40
+#, python-format
+msgid "%(counter)s episode recognised"
+msgid_plural "%(counter)s episodes recognised"
+msgstr[0] "%(counter)s épisode reconnu"
+msgstr[1] "%(counter)s épisodes reconnus"
+
+#: templates/sosoblue/history_group.html:42
+#, python-format
+msgid "%(counter)s not recognised"
+msgid_plural "%(counter)s not recognised"
+msgstr[0] "%(counter)s non reconnu"
+msgstr[1] "%(counter)s non reconnus"
+
+#: templates/sosoblue/history_group.html:46
+msgid "above the age limit of this account"
+msgstr "au-dessus de la limite d'âge de ce compte"
+
+#: templates/sosoblue/history_group.html:56
+msgid "Details and correction"
+msgstr "Détails et correction"
+
+#: templates/sosoblue/history_group.html:66
+msgid "Use this TMDB page"
+msgstr "Utiliser cette page TMDB"
+
+#: templates/sosoblue/history_group.html:72
+msgid "Whole season watched"
+msgstr "Saison vue en entier"
+
+#: templates/sosoblue/history_list.html:11
+msgid ""
+"Netflix, Prime Video or Plex: the titles are matched with TMDB, you check "
+"the result, then it is imported. Episodes already marked are never added "
+"twice."
+msgstr ""
+"Netflix, Prime Video ou Plex : les titres sont retrouvés sur TMDB, vous "
+"vérifiez le résultat, puis tout est importé. Un épisode déjà marqué n'est "
+"jamais ajouté deux fois."
+
+#: templates/sosoblue/history_list.html:16
+msgid "Import into the account of"
+msgstr "Importer dans le compte de"
+
+#: templates/sosoblue/history_list.html:38
+msgid ""
+"On netflix.com, open the profile, then Account → Profiles → Viewing "
+"activity, and click \"Download all\" at the bottom. You get "
+"NetflixViewingHistory.csv."
+msgstr ""
+"Sur netflix.com, ouvrez le profil, puis Compte → Profils → Activité de "
+"visionnage, et cliquez sur « Tout télécharger » en bas de la page. Vous "
+"obtenez NetflixViewingHistory.csv."
+
+#: templates/sosoblue/history_list.html:43
+#: templates/sosoblue/history_list.html:61
+#: templates/sosoblue/plex_accounts.html:14
+msgid "Analyse"
+msgstr "Analyser"
+
+#: templates/sosoblue/history_list.html:56
+msgid ""
+"The CSV produced by the export script on the Prime Video history page "
+"(watch-history-export-….csv)."
+msgstr ""
+"Le CSV produit par le script d'export sur la page d'historique de Prime "
+"Video (watch-history-export-….csv)."
+
+#: templates/sosoblue/history_list.html:73
+msgid ""
+"The server keeps the history of each Plex profile. To find the token: in "
+"Plex, open any movie, ⋯ → Get Info → View XML, and copy what follows X-Plex-"
+"Token= in the address bar."
+msgstr ""
+"Le serveur garde l'historique de chaque profil Plex. Pour trouver le jeton :"
+" dans Plex, ouvrez n'importe quel film, ⋯ → Obtenir des infos → Afficher le "
+"XML, et copiez ce qui suit X-Plex-Token= dans la barre d'adresse."
+
+#: templates/sosoblue/history_list.html:86
+msgid "Plex token"
+msgstr "Jeton Plex"
+
+#: templates/sosoblue/history_list.html:92
+msgid "Show the profiles"
+msgstr "Afficher les profils"
+
+#: templates/sosoblue/history_list.html:99
+msgid "Previous imports"
+msgstr "Imports précédents"
+
+#: templates/sosoblue/history_progress.html:8
+msgid "Matching the titles with TMDB…"
+msgstr "Recherche des titres sur TMDB…"
+
+#: templates/sosoblue/history_progress.html:10
+msgid "Importing…"
+msgstr "Import en cours…"
+
+#: templates/sosoblue/history_progress.html:14
+msgid "Reading the history…"
+msgstr "Lecture de l'historique…"
+
+#: templates/sosoblue/history_progress.html:17
+msgid "You can leave this page, it carries on in the background."
+msgstr "Vous pouvez quitter cette page, le travail continue en arrière-plan."
 
 #: templates/sosoblue/household.html:5 templates/sosoblue/household.html:10
 #: templates/sosoblue/household_panel.html:4
@@ -61,15 +290,10 @@ msgstr "Ces derniers temps"
 
 #: templates/sosoblue/household.html:40
 #, python-format
-#| msgid "S%(season)s E%(episode)s"
 msgid "%(counter)s episode"
 msgid_plural "%(counter)s episodes"
 msgstr[0] "%(counter)s épisode"
 msgstr[1] "%(counter)s épisodes"
-
-#: templates/sosoblue/household.html:43
-msgid "Movie"
-msgstr "Film"
 
 #: templates/sosoblue/household.html:53
 msgid "Nothing watched in the last 30 days."
@@ -145,7 +369,6 @@ msgstr "Pas vu"
 
 #: templates/sosoblue/household_panel.html:26
 #, python-format
-#| msgid "S%(season)s E%(episode)s"
 msgid "Up to S%(season)s E%(episode)s · %(counter)s episode"
 msgid_plural "Up to S%(season)s E%(episode)s · %(counter)s episodes"
 msgstr[0] "Jusqu'à S%(season)s E%(episode)s · %(counter)s épisode"
@@ -189,6 +412,24 @@ msgstr[1] "+%(counter)s ép."
 #: templates/sosoblue/household_panel.html:57
 msgid "Who watched what"
 msgstr "Qui a vu quoi"
+
+#: templates/sosoblue/import_banner.html:4
+msgid "Netflix, Prime Video and Plex"
+msgstr "Netflix, Prime Video et Plex"
+
+#: templates/sosoblue/import_banner.html:5
+msgid "Import a viewing history with a review of what was recognised."
+msgstr ""
+"Importer un historique de visionnage, avec une vérification de ce qui a été "
+"reconnu."
+
+#: templates/sosoblue/plex_accounts.html:6
+msgid "Plex profile to import"
+msgstr "Profil Plex à importer"
+
+#: templates/sosoblue/plex_accounts.html:17
+msgid "No profile found on this server."
+msgstr "Aucun profil trouvé sur ce serveur."
 
 #: templates/sosoblue/sidebar_links.html:11 templates/sosoblue/waiting.html:5
 #: templates/sosoblue/waiting.html:11
@@ -253,3 +494,33 @@ msgstr ""
 #: views.py:58
 msgid "Household settings saved."
 msgstr "Réglages du foyer enregistrés."
+
+#: views_history.py:71
+msgid "Enter the server address (starting with http://) and the token."
+msgstr "Saisissez l'adresse du serveur (commençant par http://) et le jeton."
+
+#: views_history.py:76
+#, python-format
+msgid "Could not reach the Plex server: %(error)s"
+msgstr "Impossible de joindre le serveur Plex : %(error)s"
+
+#: views_history.py:114
+msgid "Choose the Plex account to import."
+msgstr "Choisissez le profil Plex à importer."
+
+#: views_history.py:119
+msgid "Choose the exported file (20 MB at most)."
+msgstr "Choisissez le fichier exporté (20 Mo au maximum)."
+
+#: views_history.py:128
+#, python-format
+msgid "This file does not look like a %(source)s export."
+msgstr "Ce fichier ne ressemble pas à un export %(source)s."
+
+#: views_history.py:247
+msgid "Paste a TMDB link, for example https://www.themoviedb.org/tv/1399"
+msgstr "Collez un lien TMDB, par exemple https://www.themoviedb.org/tv/1399"
+
+#: views_history.py:257
+msgid "Nothing found on TMDB with this link."
+msgstr "Rien trouvé sur TMDB avec ce lien."

@@ -1,0 +1,82 @@
+{% load i18n %}
+<div id="sb-group-{{ group.id }}"
+     class="flex flex-col gap-2 px-4 py-3 {% if not group.selected %}sb-dim{% endif %}">
+  <div class="flex items-center gap-3">
+    {% if review %}
+      <button class="sb-check {% if group.selected %}sb-check-on{% endif %}"
+              title="{% if group.selected %}{% trans 'Leave out' %}{% else %}{% trans 'Include' %}{% endif %}"
+              {% if not group.media_id %}disabled{% endif %}
+              hx-post="{% url 'sosoblue:history_group_toggle' group.history_import_id group.id %}"
+              hx-target="#sb-group-{{ group.id }}"
+              hx-swap="outerHTML">
+        {% if group.selected %}{% include "app/icons/checkmark.svg" with classes="w-4 h-4" %}{% endif %}
+      </button>
+    {% endif %}
+    <img alt=""
+         class="sb-thumb object-cover rounded-md shrink-0 bg-[#3e454d]"
+         src="{{ group.media_image|default:IMG_NONE }}">
+    <div class="min-w-0 flex-1">
+      <p class="text-sm font-medium truncate">
+        {% if group.media_id %}
+          <a href="https://www.themoviedb.org/{{ group.media_type }}/{{ group.media_id }}"
+             target="_blank"
+             class="hover:text-indigo-400 transition-colors">{{ group.media_title }}</a>
+        {% else %}
+          <span class="text-red-400">{% trans "Not found on TMDB" %}</span>
+        {% endif %}
+        <span class="text-xs text-gray-400">· {% if group.media_type == "movie" %}{% trans "Movie" %}{% else %}{% trans "Series" %}{% endif %}</span>
+        {% if group.age is not None %}<span class="sb-rating">{{ group.age }}+</span>{% endif %}
+      </p>
+      {% if group.media_title != group.name %}
+        <p class="text-xs text-gray-400 truncate">{% blocktrans with name=group.name %}In the history: {{ name }}{% endblocktrans %}</p>
+      {% endif %}
+      <p class="text-xs text-gray-400">
+        {% if group.imported_count or group.existing_count %}
+          {% blocktrans count counter=group.imported_count %}{{ counter }} added{% plural %}{{ counter }} added{% endblocktrans %}
+          · {% blocktrans count counter=group.existing_count %}{{ counter }} already there{% plural %}{{ counter }} already there{% endblocktrans %}
+        {% elif group.media_type == "movie" %}
+          {% blocktrans count counter=group.line_count %}Watched {{ counter }} time{% plural %}Watched {{ counter }} times{% endblocktrans %}
+        {% else %}
+          {% blocktrans count counter=group.matched_count %}{{ counter }} episode recognised{% plural %}{{ counter }} episodes recognised{% endblocktrans %}
+          {% if group.unmatched_count %}
+            · <span class="text-amber-400">{% blocktrans count counter=group.unmatched_count %}{{ counter }} not recognised{% plural %}{{ counter }} not recognised{% endblocktrans %}</span>
+          {% endif %}
+        {% endif %}
+        {% if group.above_limit %}
+          · <span class="text-amber-400">{% trans "above the age limit of this account" %}</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  {% if error %}<p class="text-sm text-red-400">{{ error }}</p>{% endif %}
+
+  {% if review %}
+    <details class="text-sm">
+      <summary class="cursor-pointer text-gray-400 hover:text-white">{% trans "Details and correction" %}</summary>
+      <div class="mt-2 space-y-2">
+        <form class="flex flex-col sm:flex-row gap-2"
+              hx-post="{% url 'sosoblue:history_group_fix' group.history_import_id group.id %}"
+              hx-target="#sb-group-{{ group.id }}"
+              hx-swap="outerHTML">
+          <input name="reference"
+                 required
+                 placeholder="https://www.themoviedb.org/tv/1399"
+                 class="flex-1 bg-[#39404b] rounded-md px-3 py-2 text-sm">
+          <button class="px-3 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors cursor-pointer">{% trans "Use this TMDB page" %}</button>
+        </form>
+        <ul class="text-xs text-gray-400 space-y-1 max-h-60 overflow-y-auto">
+          {% for line in group.lines.all %}
+            {% if not line.raw|slice:":2" == "+ " %}
+              <li>
+                {% if line.state == "unmatched" %}<span class="text-amber-400">✗</span>{% elif line.state == "covered" %}<span title="{% trans 'Whole season watched' %}">≈</span>{% else %}<span class="text-green-400">✓</span>{% endif %}
+                {{ line.watched_at|date:"SHORT_DATE_FORMAT" }} · {{ line.raw }}
+                {% if line.matched_episode %}<span class="text-gray-300">→ S{{ line.matched_season }}E{{ line.matched_episode }}</span>{% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </details>
+  {% endif %}
+</div>
