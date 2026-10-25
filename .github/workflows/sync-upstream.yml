@@ -1,0 +1,119 @@
+name: Sync upstream
+
+# Keeps the sosoblue branch up to date with FuzzyGrim/Yamtrack.
+# Every week it merges the upstream dev branch (and the i18n branch of
+# FuzzyGrim/Yamtrack#1366 until it is merged), runs the test suite, and
+# pushes the result, which rebuilds the image. On a conflict or a failing
+# test it stops without pushing anything and sends a notification.
+#
+# Secrets:
+#   SYNC_TOKEN     fine-grained token on this repository with Contents and
+#                  Workflows read/write. Needed because upstream changes to
+#                  .github/workflows cannot be pushed with GITHUB_TOKEN, and
+#                  so that the push triggers the image build.
+#   NOTIFY_URL     optional ntfy topic URL or Discord webhook URL.
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      NOTIFY_URL: ${{ secrets.NOTIFY_URL }}
+    steps:
+      - name: Checkout sosoblue
+        uses: actions/checkout@v7
+        with:
+          ref: sosoblue
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_TOKEN || github.token }}
+
+      - name: Merge upstream changes
+        id: merge
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          before=$(git rev-parse HEAD)
+
+          git fetch https://github.com/FuzzyGrim/Yamtrack.git dev
+          if ! git merge --no-edit -m "Merge FuzzyGrim/Yamtrack dev" FETCH_HEAD; then
+            git diff --name-only --diff-filter=U > conflicts.txt
+            git merge --abort
+            echo "source=FuzzyGrim/Yamtrack dev" >> "$GITHUB_OUTPUT"
+            echo "::error::Conflict while merging FuzzyGrim/Yamtrack dev: $(tr '\n' ' ' < conflicts.txt)"
+            exit 1
+          fi
+
+          # Translation branch of FuzzyGrim/Yamtrack#1366, until it is merged upstream
+          if git fetch https://github.com/66Bunz/Yamtrack.git feat/i18n; then
+            if ! git merge --no-edit -m "Merge 66Bunz/Yamtrack feat/i18n" FETCH_HEAD; then
+              git diff --name-only --diff-filter=U > conflicts.txt
+              git merge --abort
+              echo "source=66Bunz/Yamtrack feat/i18n" >> "$GITHUB_OUTPUT"
+              echo "::error::Conflict while merging 66Bunz/Yamtrack feat/i18n: $(tr '\n' ' ' < conflicts.txt)"
+              exit 1
+            fi
+          fi
+
+          if [ "$(git rev-parse HEAD)" = "$before" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Already up to date."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git log --oneline "$before"..HEAD | head -50
+          fi
+
+      - name: Set up Python
+        if: steps.merge.outputs.changed == 'true'
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        if: steps.merge.outputs.changed == 'true'
+        run: |
+          uv sync --locked --no-default-groups --group test
+          uv run playwright install
+
+      - name: Compile translations
+        if: steps.merge.outputs.changed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext
+          cd src && uv run manage.py compilemessages
+
+      - name: Check migrations
+        if: steps.merge.outputs.changed == 'true'
+        run: uv run src/manage.py makemigrations --check --dry-run
+
+      - name: Run tests
+        if: steps.merge.outputs.changed == 'true'
+        timeout-minutes: 30
+        run: uv run src/manage.py test app users integrations lists events --parallel
+
+      - name: Push sosoblue
+        if: steps.merge.outputs.changed == 'true'
+        run: git push origin HEAD:sosoblue
+
+      - name: Notify on failure
+        if: failure() && env.NOTIFY_URL != ''
+        run: |
+          msg="Yamtrack : la synchronisation avec la version officielle a échoué (${{ steps.merge.outputs.source || 'tests ou construction' }}). Rien n'a été modifié. Détails : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          case "$NOTIFY_URL" in
+            *discord.com/api/webhooks*)
+              curl -fsS -H "Content-Type: application/json" \
+                -d "$(jq -n --arg c "$msg" '{content: $c}')" "$NOTIFY_URL" ;;
+            *)
+              curl -fsS -H "Title: Yamtrack" -H "Tags: warning" -d "$msg" "$NOTIFY_URL" ;;
+          esac
