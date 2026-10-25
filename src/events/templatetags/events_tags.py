@@ -1,7 +1,6 @@
 import datetime
 
 from django import template
-from django.utils import dateformat
 
 register = template.Library()
 
@@ -24,4 +23,4 @@ def day_of_week(day, month, year):
     date_obj = datetime.date(year, month, day)
 
     # Get day of week
-    return dateformat.format(date_obj, "l")  # Full name (Monday, Tuesday, etc.)
+    return date_obj.strftime("%A")  # Full name (Monday, Tuesday, etc.)

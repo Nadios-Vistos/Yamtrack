@@ -6,7 +6,6 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.translation import gettext
 
 from app.models import TV, MediaTypes, Season
 from app.templatetags import app_tags
@@ -48,7 +47,7 @@ def send_releases():
     result = send_notifications(
         events=events,
         users=users,
-        title=gettext("🔔 YamTrack: New Releases Available! 🔔"),
+        title="🔔 YamTrack: New Releases Available! 🔔",
     )
 
     # Mark events as notified
@@ -103,7 +102,7 @@ def send_daily_digest():
     if not events.exists():
         return "No releases scheduled for today"
 
-    title = gettext("📆 YamTrack: Today's Releases 📆")
+    title = "📆 YamTrack: Today's Releases 📆"
 
     result = send_notifications(
         events=events,
@@ -432,11 +431,9 @@ def format_notification(releases):
 
         # Add a header for each media type with icon
         if media_type == MediaTypes.SEASON.value:
-            notification_body.append(f"{icon}  {gettext('TV Shows')}")
+            notification_body.append(f"{icon}  TV Shows")
         else:
-            notification_body.append(
-                f"{icon}  {app_tags.media_type_readable(media_type).upper()}",
-            )
+            notification_body.append(f"{icon}  {media_type.upper()}")
 
         for event in media_events:
             if event.is_sentinel_time:
@@ -451,7 +448,7 @@ def format_notification(releases):
         # Add a blank line between media types
         notification_body.append("")
 
-    notification_body.append(gettext("Enjoy your media!"))
+    notification_body.append("Enjoy your media!")
 
     return "\n".join(notification_body)
 

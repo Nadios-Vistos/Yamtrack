@@ -2,8 +2,8 @@ import math
 
 from django import forms
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 
+from app import config
 from app.models import (
     TV,
     Anime,
@@ -66,7 +66,7 @@ class CustomDurationField(forms.CharField):
         if "h" in value:  # [n]h format
             return int(value.strip("h")), 0
 
-        msg = _("Invalid time format")
+        msg = "Invalid time format"
         raise ValueError(msg)
 
     def _validate_minutes(self, minutes):
@@ -87,11 +87,7 @@ class CustomDurationField(forms.CharField):
             self._validate_minutes(minutes)
             return hours * 60 + minutes
         except ValueError as e:
-            msg = _(
-                "Invalid time format. Provide duration in hours (e.g., '5', '1.5'), "
-                "hours and minutes (e.g., '5:30', '5h 30min'), "
-                "or just minutes (e.g., '30min')."
-            )
+            msg = "Invalid time format. Provide duration in hours (e.g., '5', '1.5'), hours and minutes (e.g., '5:30', '5h 30min'), or just minutes (e.g., '30min')."  # noqa: E501
             raise forms.ValidationError(msg) from e
 
 
@@ -101,15 +97,15 @@ class ManualItemForm(forms.ModelForm):
     parent_tv = forms.ModelChoiceField(
         required=False,
         queryset=TV.objects.none(),
-        empty_label=_("Select"),
-        label=_("Parent TV Show"),
+        empty_label="Select",
+        label="Parent TV Show",
     )
 
     parent_season = forms.ModelChoiceField(
         required=False,
         queryset=Season.objects.none(),
-        empty_label=_("Select"),
-        label=_("Parent Season"),
+        empty_label="Select",
+        label="Parent Season",
     )
 
     class Meta:
@@ -233,16 +229,8 @@ class MediaForm(forms.ModelForm):
             if settings.TRACK_TIME
             else forms.DateInput(attrs={"type": "date"}),
             "notes": forms.Textarea(
-                attrs={"placeholder": _("Add any notes or comments..."), "rows": "5"},
+                attrs={"placeholder": "Add any notes or comments...", "rows": "5"},
             ),
-        }
-        labels = {
-            "score": _("Score"),
-            "progress": _("Progress"),
-            "status": _("Status"),
-            "start_date": _("Start Date"),
-            "end_date": _("End Date"),
-            "notes": _("Notes"),
         }
 
 
@@ -254,8 +242,9 @@ class MangaForm(MediaForm):
 
         model = Manga
         labels = {
-            **MediaForm.Meta.labels,
-            "progress": _("Progress (Chapters)"),
+            "progress": (
+                f"Progress ({config.get_unit(MediaTypes.MANGA.value, short=False)}s)"
+            ),
         }
 
 
@@ -290,7 +279,7 @@ class GameForm(MediaForm):
     progress = CustomDurationField(
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "hh:mm"}),
-        label=_("Progress (Time Played)"),
+        label="Progress (Time Played)",
     )
 
     class Meta(MediaForm.Meta):
@@ -307,8 +296,9 @@ class BookForm(MediaForm):
 
         model = Book
         labels = {
-            **MediaForm.Meta.labels,
-            "progress": _("Progress (Pages)"),
+            "progress": (
+                f"Progress ({config.get_unit(MediaTypes.BOOK.value, short=False)}s)"
+            ),
         }
 
 
@@ -320,8 +310,9 @@ class ComicForm(MediaForm):
 
         model = Comic
         labels = {
-            **MediaForm.Meta.labels,
-            "progress": _("Progress (Issues)"),
+            "progress": (
+                f"Progress ({config.get_unit(MediaTypes.COMIC.value, short=False)}s)"
+            ),
         }
 
 
@@ -333,8 +324,10 @@ class BoardgameForm(MediaForm):
 
         model = BoardGame
         labels = {
-            **MediaForm.Meta.labels,
-            "progress": _("Progress (Plays)"),
+            "progress": (
+                "Progress "
+                f"({config.get_unit(MediaTypes.BOARDGAME.value, short=False)}s)"
+            ),
         }
 
 
@@ -372,10 +365,6 @@ class EpisodeForm(forms.ModelForm):
 
         model = Episode
         fields = ("end_date", "notes")
-        labels = {
-            "end_date": _("End Date"),
-            "notes": _("Notes"),
-        }
         widgets = {
             "end_date": forms.DateInput(attrs={"type": "date"}),
         }

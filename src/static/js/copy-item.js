@@ -63,9 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function showError() {
         alert(
-          window.yt(
-            "Could not copy to clipboard. Please select the text and press Ctrl+C/Cmd+C to copy.",
-          )
+          "Could not copy to clipboard. Please select the text and press Ctrl+C/Cmd+C to copy."
         );
       }
     });

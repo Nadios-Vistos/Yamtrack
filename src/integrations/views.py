@@ -13,7 +13,6 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import gettext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
@@ -62,13 +61,11 @@ def import_trakt_private(request):
     state_token = request.GET.get("state")
     state = request.session.get(state_token)
     if not state:
-        messages.error(
-            request, gettext("Invalid or expired Trakt authorization request.")
-        )
+        messages.error(request, "Invalid or expired Trakt authorization request.")
         return redirect("import_data")
 
     if not request.GET.get("code"):
-        messages.error(request, gettext("Trakt authorization failed."))
+        messages.error(request, "Trakt authorization failed.")
         return redirect("import_data")
 
     redirect_uri = state.get("redirect_uri") or app_helpers.build_absolute_app_url(
@@ -90,9 +87,7 @@ def import_trakt_private(request):
             username=oauth_callback["username"],
             redirect_uri=redirect_uri,
         )
-        messages.info(
-            request, gettext("The task to import media from Trakt has been queued.")
-        )
+        messages.info(request, "The task to import media from Trakt has been queued.")
     else:
         helpers.create_import_schedule(
             oauth_callback["username"],
@@ -112,7 +107,7 @@ def import_trakt_public(request):
     """View for importing Trakt data using public username."""
     username = request.POST.get("user")
     if not username:
-        messages.error(request, gettext("Trakt username is required."))
+        messages.error(request, "Trakt username is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -125,9 +120,7 @@ def import_trakt_public(request):
             mode=mode,
             username=username,
         )
-        messages.info(
-            request, gettext("The task to import media from Trakt has been queued.")
-        )
+        messages.info(request, "The task to import media from Trakt has been queued.")
     else:
         helpers.create_import_schedule(
             username=username,
@@ -146,7 +139,7 @@ def import_trakt_export(request):
     file = request.FILES.get("trakt_export_zip")
 
     if not file:
-        messages.error(request, gettext("Trakt export zip file is required."))
+        messages.error(request, "Trakt export zip file is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -157,7 +150,7 @@ def import_trakt_export(request):
     )
     messages.info(
         request,
-        gettext("The task to import media from Trakt export file has been queued."),
+        "The task to import media from Trakt export file has been queued.",
     )
     return redirect("import_data")
 
@@ -206,9 +199,7 @@ def import_simkl_private(request):
 
     if frequency == "once":
         tasks.import_simkl.delay(token=enc_token, user_id=request.user.id, mode=mode)
-        messages.info(
-            request, gettext("The task to import media from Simkl has been queued.")
-        )
+        messages.info(request, "The task to import media from Simkl has been queued.")
     else:
         helpers.create_import_schedule(
             oauth_callback["username"],
@@ -228,7 +219,7 @@ def import_mal(request):
     """View for importing anime and manga data from MyAnimeList."""
     username = request.POST.get("user")
     if not username:
-        messages.error(request, gettext("MyAnimeList username is required."))
+        messages.error(request, "MyAnimeList username is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -238,7 +229,7 @@ def import_mal(request):
         tasks.import_mal.delay(username=username, user_id=request.user.id, mode=mode)
         messages.info(
             request,
-            gettext("The task to import media from MyAnimeList has been queued."),
+            "The task to import media from MyAnimeList has been queued.",
         )
     else:
         import_time = request.POST["time"]
@@ -293,7 +284,7 @@ def import_anilist_private(request):
     username = oauth_callback["username"]
 
     if not username:
-        messages.error(request, gettext("AniList username is required."))
+        messages.error(request, "AniList username is required.")
         return redirect("import_data")
 
     frequency = request.session[state_token]["frequency"]
@@ -307,7 +298,7 @@ def import_anilist_private(request):
             username=username,
             token=enc_token,
         )
-        messages.info(request, gettext("AniList import queued."))
+        messages.info(request, "AniList import queued.")
     else:
         helpers.create_import_schedule(
             username=username,
@@ -326,7 +317,7 @@ def import_anilist_public(request):
     """View for importing anime and manga data from AniList."""
     username = request.POST.get("user")
     if not username:
-        messages.error(request, gettext("AniList username is required."))
+        messages.error(request, "AniList username is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -339,7 +330,7 @@ def import_anilist_public(request):
             mode=mode,
             username=username,
         )
-        messages.info(request, gettext("AniList import queued."))
+        messages.info(request, "AniList import queued.")
     else:
         helpers.create_import_schedule(
             username=username,
@@ -357,7 +348,7 @@ def import_kitsu(request):
     """View for importing anime and manga data from Kitsu by user ID."""
     kitsu_id = request.POST.get("user")
     if not kitsu_id:
-        messages.error(request, gettext("Kitsu user ID is required."))
+        messages.error(request, "Kitsu user ID is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -365,9 +356,7 @@ def import_kitsu(request):
 
     if frequency == "once":
         tasks.import_kitsu.delay(username=kitsu_id, user_id=request.user.id, mode=mode)
-        messages.info(
-            request, gettext("The task to import media from Kitsu has been queued.")
-        )
+        messages.info(request, "The task to import media from Kitsu has been queued.")
     else:
         import_time = request.POST["time"]
         helpers.create_import_schedule(
@@ -387,7 +376,7 @@ def import_yamtrack(request):
     file = request.FILES.get("yamtrack_csv")
 
     if not file:
-        messages.error(request, gettext("Yamtrack CSV file is required."))
+        messages.error(request, "Yamtrack CSV file is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -398,7 +387,7 @@ def import_yamtrack(request):
     )
     messages.info(
         request,
-        gettext("The task to import media from Yamtrack CSV file has been queued."),
+        "The task to import media from Yamtrack CSV file has been queued.",
     )
     return redirect("import_data")
 
@@ -409,7 +398,7 @@ def import_hltb(request):
     file = request.FILES.get("hltb_csv")
 
     if not file:
-        messages.error(request, gettext("HowLongToBeat CSV file is required."))
+        messages.error(request, "HowLongToBeat CSV file is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -420,9 +409,7 @@ def import_hltb(request):
     )
     messages.info(
         request,
-        gettext(
-            "The task to import media from HowLongToBeat CSV file has been queued."
-        ),
+        "The task to import media from HowLongToBeat CSV file has been queued.",
     )
     return redirect("import_data")
 
@@ -432,7 +419,7 @@ def import_steam(request):
     """View for importing game data from Steam."""
     steam_id = request.POST.get("user")
     if not steam_id:
-        messages.error(request, gettext("Steam ID is required."))
+        messages.error(request, "Steam ID is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -440,9 +427,7 @@ def import_steam(request):
 
     if frequency == "once":
         tasks.import_steam.delay(username=steam_id, user_id=request.user.id, mode=mode)
-        messages.info(
-            request, gettext("The task to import media from Steam has been queued.")
-        )
+        messages.info(request, "The task to import media from Steam has been queued.")
     else:
         import_time = request.POST["time"]
         helpers.create_import_schedule(
@@ -461,7 +446,7 @@ def import_imdb(request):
     file = request.FILES.get("imdb_csv")
 
     if not file:
-        messages.error(request, gettext("IMDB CSV file is required."))
+        messages.error(request, "IMDB CSV file is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -472,7 +457,7 @@ def import_imdb(request):
     )
     messages.info(
         request,
-        gettext("The task to import media from IMDB CSV file has been queued."),
+        "The task to import media from IMDB CSV file has been queued.",
     )
     return redirect("import_data")
 
@@ -483,7 +468,7 @@ def import_goodreads(request):
     file = request.FILES.get("goodreads_csv")
 
     if not file:
-        messages.error(request, gettext("GoodReads CSV file is required."))
+        messages.error(request, "GoodReads CSV file is required.")
         return redirect("import_data")
 
     mode = request.POST["mode"]
@@ -494,7 +479,7 @@ def import_goodreads(request):
     )
     messages.info(
         request,
-        gettext("The task to import media from GoodReads CSV file has been queued."),
+        "The task to import media from GoodReads CSV file has been queued.",
     )
     return redirect("import_data")
 

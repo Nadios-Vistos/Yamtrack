@@ -5,7 +5,6 @@ from zoneinfo import ZoneInfo
 import requests
 from django.conf import settings
 from django.core.cache import cache
-from django.utils import dateformat
 
 from app import helpers
 from app.models import MediaTypes, Sources
@@ -354,7 +353,7 @@ def get_broadcast(response):
     ).replace(tzinfo=japan_timezone)
 
     broadcast_time_local = broadcast_time_japan.astimezone(settings.TZ)
-    return dateformat.format(broadcast_time_local, "l H:i")
+    return broadcast_time_local.strftime("%A %H:%M")
 
 
 def get_source(response):

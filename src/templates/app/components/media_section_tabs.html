@@ -1,4 +1,3 @@
-{% load i18n %}
 {% load app_tags %}
 {% media_section_count media user_medias watch_providers watch_provider_region as section_count %}
 {% if section_count > 1 %}
@@ -6,14 +5,14 @@
     <button @click="tab = 'overview'"
             class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
             :class="tab === 'overview' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
-      {% translate "Overview" %}
+      Overview
     </button>
 
     {% if media.cast %}
       <button @click="tab = 'cast'"
               class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
               :class="tab === 'cast' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
-        {% translate "Cast" %}
+        Cast
       </button>
     {% endif %}
 
@@ -24,9 +23,9 @@
                   class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
                   :class="tab === 'related-{{ forloop.counter }}' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
             {% if name == "dlcs" %}
-              {% translate "DLCs" %}
+              DLCs
             {% else %}
-              {{ name|detail_label|capfirst }}
+              {{ name|no_underscore|title }}
             {% endif %}
           </button>
         {% endif %}
@@ -37,7 +36,7 @@
       <button @click="tab = 'repeats'"
               class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
               :class="tab === 'repeats' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
-        {% translate "Repeats" %}
+        Repeats
       </button>
     {% endif %}
 
@@ -45,7 +44,7 @@
       <button @click="tab = 'episodes'"
               class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
               :class="tab === 'episodes' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
-        {% translate "Episodes" %}
+        Episodes
       </button>
     {% endif %}
 
@@ -54,7 +53,7 @@
         <button @click="tab = 'streaming'"
                 class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
                 :class="tab === 'streaming' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
-          {% translate "Streaming" %}
+          Streaming
         </button>
       {% endif %}
     {% endif %}
@@ -63,7 +62,7 @@
       <button @click="tab = 'ttb'"
               class="pb-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors duration-200 cursor-pointer"
               :class="tab === 'ttb' ? 'text-white border-indigo-500' : 'text-gray-400 border-transparent hover:text-white'">
-        {% translate "Time to Beat" %}
+        Time to Beat
       </button>
     {% endif %}
   </nav>

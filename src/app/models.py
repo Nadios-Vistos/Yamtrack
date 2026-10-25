@@ -21,8 +21,6 @@ from django.db.models import (
 )
 from django.db.models.functions import RowNumber
 from django.utils import timezone
-from django.utils.translation import gettext, ngettext
-from django.utils.translation import gettext_lazy as _
 from model_utils import FieldTracker
 from model_utils.fields import MonitorField
 from simple_history.models import HistoricalRecords
@@ -48,22 +46,22 @@ class Sources(models.TextChoices):
     HARDCOVER = "hardcover", "Hardcover"
     COMICVINE = "comicvine", "Comic Vine"
     BGG = "bgg", "BoardGameGeek"
-    MANUAL = "manual", _("Manual")
+    MANUAL = "manual", "Manual"
 
 
 class MediaTypes(models.TextChoices):
     """Choices for the media type of the item."""
 
-    TV = "tv", _("TV Show")
-    SEASON = "season", _("TV Season")
-    EPISODE = "episode", _("Episode")
-    MOVIE = "movie", _("Movie")
-    ANIME = "anime", _("Anime")
-    MANGA = "manga", _("Manga")
-    GAME = "game", _("Game")
-    BOOK = "book", _("Book")
-    COMIC = "comic", _("Comic")
-    BOARDGAME = "boardgame", _("Boardgame")
+    TV = "tv", "TV Show"
+    SEASON = "season", "TV Season"
+    EPISODE = "episode", "Episode"
+    MOVIE = "movie", "Movie"
+    ANIME = "anime", "Anime"
+    MANGA = "manga", "Manga"
+    GAME = "game", "Game"
+    BOOK = "book", "Book"
+    COMIC = "comic", "Comic"
+    BOARDGAME = "boardgame", "Boardgame"
 
 
 class Item(CalendarTriggerMixin, models.Model):
@@ -773,20 +771,20 @@ class MediaManager(models.Manager):
 class Status(models.TextChoices):
     """Choices for item status."""
 
-    COMPLETED = "Completed", _("Completed")
-    IN_PROGRESS = "In progress", _("In Progress")
-    PLANNING = "Planning", _("Planning")
-    PAUSED = "Paused", _("Paused")
-    DROPPED = "Dropped", _("Dropped")
+    COMPLETED = "Completed", "Completed"
+    IN_PROGRESS = "In progress", "In Progress"
+    PLANNING = "Planning", "Planning"
+    PAUSED = "Paused", "Paused"
+    DROPPED = "Dropped", "Dropped"
 
 
 class UserMessageLevel(models.TextChoices):
     """Choices for persistent user messages."""
 
-    SUCCESS = "success", _("Success")
-    WARNING = "warning", _("Warning")
-    ERROR = "error", _("Error")
-    INFO = "info", _("Info")
+    SUCCESS = "success", "Success"
+    WARNING = "warning", "Warning"
+    ERROR = "error", "Error"
+    INFO = "info", "Info"
 
 
 class UserMessage(models.Model):
@@ -1161,15 +1159,10 @@ class TV(Media):
 
         if episodes_to_create:
             created_episodes_count = len(episodes_to_create)
+            episode_label = "episode" if created_episodes_count == 1 else "episodes"
             self.create_user_message(
-                ngettext(
-                    "%(title)s had %(count)d released episode marked "
-                    "as watched automatically.",
-                    "%(title)s had %(count)d released episodes marked "
-                    "as watched automatically.",
-                    created_episodes_count,
-                )
-                % {"title": self, "count": created_episodes_count},
+                f"had {created_episodes_count} released {episode_label} marked "
+                "as watched automatically.",
                 level=UserMessageLevel.INFO,
             )
 
@@ -1181,11 +1174,7 @@ class TV(Media):
                 fields=["status"],
             )
             self.create_user_message(
-                gettext(
-                    "%(title)s was left in progress because unreleased episodes "
-                    "or seasons remain.",
-                )
-                % {"title": self},
+                "was left in progress because unreleased episodes or seasons remain.",
                 level=UserMessageLevel.WARNING,
             )
 
@@ -1292,11 +1281,8 @@ class TV(Media):
 
         if started_season_number is not None:
             self.create_user_message(
-                gettext(
-                    "%(title)s Season %(number)s was marked as in progress "
-                    "automatically.",
-                )
-                % {"title": self, "number": started_season_number},
+                f"Season {started_season_number} was marked as in progress "
+                "automatically.",
                 level=UserMessageLevel.INFO,
             )
 
@@ -1330,11 +1316,8 @@ class TV(Media):
                 fields=["status"],
             )
             self.create_user_message(
-                gettext(
-                    "%(title)s remains in progress because another season is still "
-                    "pending or has not aired yet.",
-                )
-                % {"title": self},
+                "remains in progress because another season is still "
+                "pending or has not aired yet.",
                 level=UserMessageLevel.INFO,
             )
 
@@ -1346,8 +1329,7 @@ class TV(Media):
                 fields=["status"],
             )
             self.create_user_message(
-                gettext("%(title)s was marked as completed automatically.")
-                % {"title": self},
+                "was marked as completed automatically.",
                 level=UserMessageLevel.SUCCESS,
             )
 
@@ -1413,15 +1395,12 @@ class Season(Media):
                         Episode,
                     )
                     created_episodes_count = len(episodes_to_create)
+                    episode_label = (
+                        "episode" if created_episodes_count == 1 else "episodes"
+                    )
                     self.create_user_message(
-                        ngettext(
-                            "%(title)s had %(count)d released episode marked "
-                            "as watched automatically.",
-                            "%(title)s had %(count)d released episodes marked "
-                            "as watched automatically.",
-                            created_episodes_count,
-                        )
-                        % {"title": self, "count": created_episodes_count},
+                        f"had {created_episodes_count} released {episode_label} "
+                        "marked as watched automatically.",
                         level=UserMessageLevel.INFO,
                     )
 
@@ -1437,11 +1416,7 @@ class Season(Media):
                         fields=["status"],
                     )
                     self.create_user_message(
-                        gettext(
-                            "%(title)s was left in progress because unreleased "
-                            "episodes remain.",
-                        )
-                        % {"title": self},
+                        "was left in progress because unreleased episodes remain.",
                         level=UserMessageLevel.WARNING,
                     )
 
@@ -1837,8 +1812,7 @@ class Episode(models.Model):
                 )
                 season_just_completed = True
                 self.related_season.create_user_message(
-                    gettext("%(title)s was marked as completed automatically.")
-                    % {"title": self.related_season},
+                    "was marked as completed automatically.",
                     level=UserMessageLevel.SUCCESS,
                 )
 

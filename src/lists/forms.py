@@ -1,5 +1,4 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 from django_select2 import forms as s2forms
 
 from lists.models import CustomList
@@ -19,16 +18,11 @@ class CustomListForm(forms.ModelForm):
 
         model = CustomList
         fields = ["name", "description", "collaborators"]
-        labels = {
-            "name": _("Name"),
-            "description": _("Description"),
-            "collaborators": _("Collaborators"),
-        }
         widgets = {
             "collaborators": CollaboratorsWidget(
                 attrs={
                     "data-minimum-input-length": 1,
-                    "data-placeholder": _("Search users to add..."),
+                    "data-placeholder": "Search users to add...",
                     "data-allow-clear": "false",
                 },
             ),

@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.utils import formats, timezone
 from django.utils.dateparse import parse_date
 from django.utils.html import format_html
-from django.utils.translation import gettext, gettext_lazy, pgettext_lazy
 from unidecode import unidecode
 
 from app import config, helpers
@@ -14,130 +13,6 @@ from app.models import MediaTypes, Sources, Status
 from users.models import WATCH_PROVIDER_REGION_UNSET
 
 register = template.Library()
-
-MEDIA_TYPE_PLURALS = {
-    MediaTypes.TV.value: gettext_lazy("TV Shows"),
-    MediaTypes.SEASON.value: gettext_lazy("TV Seasons"),
-    MediaTypes.EPISODE.value: gettext_lazy("Episodes"),
-    MediaTypes.MOVIE.value: gettext_lazy("Movies"),
-    MediaTypes.ANIME.value: gettext_lazy("Anime"),
-    MediaTypes.MANGA.value: gettext_lazy("Manga"),
-    MediaTypes.GAME.value: gettext_lazy("Games"),
-    MediaTypes.BOOK.value: gettext_lazy("Books"),
-    MediaTypes.COMIC.value: gettext_lazy("Comics"),
-    MediaTypes.BOARDGAME.value: gettext_lazy("Boardgames"),
-}
-
-PAST_VERBS = {
-    "watched": pgettext_lazy("past participle", "watched"),
-    "read": pgettext_lazy("past participle", "read"),
-    "played": pgettext_lazy("past participle", "played"),
-}
-
-LONG_UNITS = {
-    "Episode": gettext_lazy("Episode"),
-    "Chapter": gettext_lazy("Chapter"),
-    "Page": gettext_lazy("Page"),
-    "Issue": gettext_lazy("Issue"),
-    "Play": gettext_lazy("Play"),
-}
-
-# Keys of the metadata details and related sections, made translatable
-DETAIL_LABELS = {
-    "format": gettext_lazy("format"),
-    "release_date": gettext_lazy("release date"),
-    "first_air_date": gettext_lazy("first air date"),
-    "last_air_date": gettext_lazy("last air date"),
-    "status": gettext_lazy("status"),
-    "runtime": gettext_lazy("runtime"),
-    "total_runtime": gettext_lazy("total runtime"),
-    "studios": gettext_lazy("studios"),
-    "country": gettext_lazy("country"),
-    "languages": gettext_lazy("languages"),
-    "seasons": gettext_lazy("seasons"),
-    "episodes": gettext_lazy("episodes"),
-    "recommendations": gettext_lazy("recommendations"),
-    "genres": gettext_lazy("genres"),
-    "source": gettext_lazy("source"),
-    "start_date": gettext_lazy("start date"),
-    "end_date": gettext_lazy("end date"),
-    "authors": gettext_lazy("authors"),
-    "author": gettext_lazy("author"),
-    "publishers": gettext_lazy("publishers"),
-    "publisher": gettext_lazy("publisher"),
-    "publish_date": gettext_lazy("publish date"),
-    "number_of_pages": gettext_lazy("number of pages"),
-    "pages": gettext_lazy("pages"),
-    "chapters": gettext_lazy("chapters"),
-    "volumes": gettext_lazy("volumes"),
-    "platforms": gettext_lazy("platforms"),
-    "developers": gettext_lazy("developers"),
-    "themes": gettext_lazy("themes"),
-    "year": gettext_lazy("year"),
-    "players": gettext_lazy("players"),
-    "playtime": gettext_lazy("playtime"),
-    "issues": gettext_lazy("issues"),
-    "upcoming": gettext_lazy("upcoming"),
-    "recent": gettext_lazy("recent"),
-    "completion": gettext_lazy("completion"),
-    "episodes_left": gettext_lazy("episodes left"),
-    "title": gettext_lazy("title"),
-    "dlcs": gettext_lazy("DLCs"),
-    "related": gettext_lazy("related"),
-    "parent": gettext_lazy("parent"),
-    "sequels": gettext_lazy("sequels"),
-    "prequels": gettext_lazy("prequels"),
-    "side_stories": gettext_lazy("side stories"),
-    "spin_offs": gettext_lazy("spin offs"),
-    "adaptations": gettext_lazy("adaptations"),
-    "alternative_versions": gettext_lazy("alternative versions"),
-    "expansions": gettext_lazy("expansions"),
-    "remakes": gettext_lazy("remakes"),
-    "remasters": gettext_lazy("remasters"),
-    "similar_games": gettext_lazy("similar games"),
-    "collections": gettext_lazy("collections"),
-    "series": gettext_lazy("series"),
-}
-
-# Common values returned by the metadata providers, made translatable
-DETAIL_VALUES = {
-    "Movie": gettext_lazy("Movie"),
-    "TV": gettext_lazy("TV"),
-    "Released": gettext_lazy("Released"),
-    "Ended": gettext_lazy("Ended"),
-    "Returning Series": gettext_lazy("Returning Series"),
-    "Canceled": gettext_lazy("Canceled"),
-    "In Production": gettext_lazy("In Production"),
-    "Planned": gettext_lazy("Planned"),
-    "Post Production": gettext_lazy("Post Production"),
-    "Rumored": gettext_lazy("Rumored"),
-    "Pilot": gettext_lazy("Pilot"),
-    "Unknown": gettext_lazy("Unknown"),
-    "Finished Airing": gettext_lazy("Finished Airing"),
-    "Currently Airing": gettext_lazy("Currently Airing"),
-    "Not yet aired": gettext_lazy("Not yet aired"),
-    "Finished": gettext_lazy("Finished"),
-    "Publishing": gettext_lazy("Publishing"),
-    "On Hiatus": gettext_lazy("On Hiatus"),
-    "Discontinued": gettext_lazy("Discontinued"),
-}
-
-
-@register.filter
-def detail_label(key):
-    """Return the translated, readable label of a metadata key."""
-    label = DETAIL_LABELS.get(key)
-    if label is not None:
-        return str(label)
-    return str(key).replace("_", " ")
-
-
-@register.filter
-def translate_value(value):
-    """Translate common metadata values, leaving anything else untouched."""
-    if isinstance(value, str) and value in DETAIL_VALUES:
-        return str(DETAIL_VALUES[value])
-    return value
 
 
 @register.simple_tag
@@ -260,19 +135,25 @@ def source_readable(source):
 @register.filter
 def media_type_readable(media_type):
     """Return the readable media type."""
-    return str(MediaTypes(media_type).label)
+    return MediaTypes(media_type).label
 
 
 @register.filter
 def media_type_readable_plural(media_type):
     """Return the readable media type in plural form."""
-    return str(MEDIA_TYPE_PLURALS[MediaTypes(media_type).value])
+    singular = MediaTypes(media_type).label
+
+    # Special cases that don't change in plural form
+    if singular.lower() in [MediaTypes.ANIME.value, MediaTypes.MANGA.value]:
+        return singular
+
+    return f"{singular}s"
 
 
 @register.filter
 def media_status_readable(media_status):
     """Return the readable media status."""
-    return str(Status(media_status).label)
+    return Status(media_status).label
 
 
 @register.filter
@@ -284,8 +165,7 @@ def default_source(media_type):
 @register.filter
 def media_past_verb(media_type):
     """Return the past tense verb for the given media type."""
-    verb = config.get_verb(media_type, past_tense=True)
-    return str(PAST_VERBS.get(verb, verb))
+    return config.get_verb(media_type, past_tense=True)
 
 
 @register.filter
@@ -303,8 +183,7 @@ def short_unit(media_type):
 @register.filter
 def long_unit(media_type):
     """Return the long unit for the media type."""
-    unit = config.get_unit(media_type, short=False)
-    return str(LONG_UNITS.get(unit, unit)) if unit else unit
+    return config.get_unit(media_type, short=False)
 
 
 @register.filter
@@ -401,9 +280,9 @@ def natural_day(datetime, user):
     days = (datetime_date - today).days
 
     if days == 0:
-        return gettext("Today %(time)s") % {"time": formatted_time}
+        return f"Today {formatted_time}"
     if days == 1:
-        return gettext("Tomorrow %(time)s") % {"time": formatted_time}
+        return f"Tomorrow {formatted_time}"
 
     return f"{formatted_date} {formatted_time}"
 

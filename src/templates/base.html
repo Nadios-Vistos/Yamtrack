@@ -1,15 +1,14 @@
-{% load i18n %}
 {% load static %}
 {% load app_tags %}
 
 <!DOCTYPE html>
-{% get_current_language as LANGUAGE_CODE %}<html lang="{{ LANGUAGE_CODE }}" class="scheme-dark bg-[#212529]">
+<html lang="en" class="scheme-dark bg-[#212529]">
   <head>
     {# Required meta tags #}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="Yamtrack, Media Tracker">
-    <meta name="description" content="{% translate "Search and track media on Yamtrack." %}">
+    <meta name="description" content="Search and track media on Yamtrack.">
 
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-status-bar-style" content="black-translucent">
@@ -84,7 +83,7 @@
                       {% include "app/icons/house.svg" with classes="w-5 h-5" %}
 
                     {% endif %}
-                    <span>{% translate "Home" %}</span>
+                    <span>Home</span>
                   </a>
                 </li>
 
@@ -126,7 +125,7 @@
                         {% include "app/icons/circle-plus.svg" with classes="w-5 h-5" %}
 
                       {% endif %}
-                      <span>{% translate "Create Custom" %}</span>
+                      <span>Create Custom</span>
                     </a>
                   </li>
 
@@ -141,7 +140,7 @@
                         {% include "app/icons/bars-pyramid.svg" with classes="w-5 h-5" %}
 
                       {% endif %}
-                      <span>{% translate "Statistics" %}</span>
+                      <span>Statistics</span>
                     </a>
                   </li>
 
@@ -156,7 +155,7 @@
                         {% include "app/icons/history.svg" with classes="w-5 h-5" %}
 
                       {% endif %}
-                      <span>{% translate "Journal" %}</span>
+                      <span>Journal</span>
                     </a>
                   </li>
 
@@ -171,7 +170,7 @@
                         {% include "app/icons/folder-plus.svg" with classes="w-5 h-5" %}
 
                       {% endif %}
-                      <span>{% translate "Lists" %}</span>
+                      <span>Lists</span>
                     </a>
                   </li>
 
@@ -186,7 +185,7 @@
                         {% include "app/icons/calendar.svg" with classes="w-5 h-5" %}
 
                       {% endif %}
-                      <span>{% translate "Calendar" %}</span>
+                      <span>Calendar</span>
                     </a>
                   </li>
                 </ul>
@@ -212,7 +211,7 @@
                     {% include "app/icons/settings.svg" with classes="w-5 h-5" %}
 
                   {% endif %}
-                  <span>{% translate "Settings" %}</span>
+                  <span>Settings</span>
                 </a>
 
                 <form method="post" action="{% url 'account_logout' %}" class="w-full">
@@ -221,7 +220,7 @@
                           class="w-full flex items-center space-x-3 px-4 py-2 rounded-md text-gray-400 hover:bg-[#23272b] hover:text-white transition-colors duration-200 text-sm cursor-pointer">
                     {% include "app/icons/logout.svg" with classes="w-5 h-5" %}
 
-                    <span>{% translate "Logout" %}</span>
+                    <span>Logout</span>
                   </button>
                 </form>
               </div>
@@ -257,7 +256,7 @@
                   <div class="relative w-full max-w-2xl">
                     <form method="get"
                           action="{% url 'search' %}"
-                          x-data=" { isOpen: false, selectedType: { display: '{{ search_type|media_type_readable_plural|escapejs }}', value: '{{ search_type }}' }, mediaTypes: {% get_search_media_types user as search_types %}{{ search_types }}, getPlaceholder() { return `{% filter escapejs %}{% translate "Search" %}{% endfilter %} ${this.selectedType.display.toLowerCase()}...` } }">
+                          x-data=" { isOpen: false, selectedType: { display: '{{ search_type|media_type_readable_plural }}', value: '{{ search_type }}' }, mediaTypes: {% get_search_media_types user as search_types %}{{ search_types }}, getPlaceholder() { return `Search ${this.selectedType.display.toLowerCase()}...` } }">
                       <div class="flex">
                         <div class="relative grow">
                           {# Search input #}
@@ -327,8 +326,6 @@
     </div>
 
     <div id="persistent-messages-actions">{% include "app/components/messages/persistent_messages_actions.html" %}</div>
-
-    {% include "app/components/js_i18n.html" %}
 
     {% block js %}
     {% endblock js %}
