@@ -86,6 +86,19 @@ def household_clear(request):
     return redirect("sosoblue:household")
 
 
+@require_POST
+def household_convert_anime(request):
+    """Move the anime among the series to the Anime section (administrators)."""
+    if not request.user.is_superuser:
+        return HttpResponseForbidden()
+    tasks.convert_anime.delay(request.user.id)
+    messages.info(
+        request,
+        _("Anime are being moved. A message will tell you which ones when done."),
+    )
+    return redirect("sosoblue:household")
+
+
 def _panel_params(data):
     media_type = data.get("media_type", "")
     media_id = data.get("media_id", "")

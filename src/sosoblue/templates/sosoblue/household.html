@@ -136,6 +136,17 @@
         </div>
       </form>
 
+      <form method="post"
+            action="{% url 'sosoblue:household_convert_anime' %}"
+            class="bg-[#2a2f35] rounded-lg p-4 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {% csrf_token %}
+        <div>
+          <p class="text-sm font-medium">{% trans "Move anime to the Anime section" %}</p>
+          <p class="text-sm text-gray-400">{% trans "Imported anime arrive as series. This moves those found on MyAnimeList to the Anime section, with their dates, for every member who has the Anime section enabled. Western cartoons stay in series." %}</p>
+        </div>
+        <button class="px-4 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors cursor-pointer whitespace-nowrap">{% trans "Move anime" %}</button>
+      </form>
+
       <details class="bg-[#2a2f35] rounded-lg p-4 mt-4">
         <summary class="cursor-pointer text-sm text-gray-300 hover:text-white">{% trans "Empty an account" %}</summary>
         <p class="text-sm text-gray-400 mt-3 mb-4">

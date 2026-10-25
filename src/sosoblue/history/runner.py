@@ -7,9 +7,9 @@ from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
 
-from app.models import TV, Episode, MediaTypes, Movie, Season, Sources, Status
+from app.models import TV, Anime, Episode, MediaTypes, Movie, Season, Sources, Status
 from app.providers import tmdb
-from sosoblue import household, ratings
+from sosoblue import anime, household, ratings
 from sosoblue.history import parsers
 from sosoblue.history.matching import (
     TmdbClient,
@@ -295,11 +295,14 @@ def apply_import(history_import):
     history_import.save(update_fields=["total", "progress"])
     errors = []
 
+    anime_mapping = anime.load_mapping() if user.anime_enabled else None
+
     for group in groups:
         lines = [line for line in group.lines.all() if line.state == ImportLine.MATCHED]
         try:
             if group.media_type == MediaTypes.TV.value:
-                for line in lines:
+                lines_as_tv = _import_anime_lines(user, group, lines, anime_mapping)
+                for line in lines_as_tv:
                     added = household.mark_episode(
                         user,
                         group.media_id,
@@ -320,7 +323,7 @@ def apply_import(history_import):
             logger.exception("Could not import %s", group)
             errors.append(f"{group.media_title or group.name}: {error}")
         with transaction.atomic():
-            ImportLine.objects.bulk_update(lines, ["state"])
+            ImportLine.objects.bulk_update(lines, ["state", "mal_id"])
         history_import.progress += len(group.lines.all())
         history_import.save(update_fields=["progress"])
 
@@ -328,6 +331,57 @@ def apply_import(history_import):
     history_import.error = "\n".join(errors)
     history_import.finished_at = timezone.now()
     history_import.save(update_fields=["status", "error", "finished_at"])
+
+
+def _import_anime_lines(user, group, lines, mapping):
+    """Import a show's lines as anime when they all have a MyAnimeList match.
+
+    Returns the lines left to import as TV episodes: none for an anime, all
+    of them otherwise (a show is never split between the two sections,
+    which also keeps shows numbered differently on TMDB and TVDB as TV).
+    """
+    if not mapping or not lines:
+        return lines
+    show_tvdb_id = anime.tvdb_id(group.media_id)
+    if not show_tvdb_id:
+        return lines
+
+    by_mal = defaultdict(list)
+    for line in lines:
+        found = anime.to_mal(
+            mapping,
+            show_tvdb_id,
+            line.matched_season,
+            line.matched_episode,
+        )
+        if found is None:
+            return lines
+        by_mal[found[0]].append((found[1], line))
+
+    for mal_id, entries in by_mal.items():
+        for _, line in entries:
+            line.mal_id = mal_id
+        dates = [line.watched_at for _, line in entries]
+        added = anime.mark_anime(
+            user,
+            mal_id,
+            max(episode for episode, _ in entries),
+            max(dates),
+            min(dates),
+        )
+        for _, line in entries:
+            line.state = ImportLine.IMPORTED if added else ImportLine.EXISTING
+    return []
+
+
+def _remove_anime(user, mal_ids, since):
+    """Delete the anime entries an import created."""
+    Anime.objects.filter(
+        user=user,
+        item__media_id__in=mal_ids,
+        item__source=Sources.MAL.value,
+        created_at__gte=since,
+    ).delete()
 
 
 def _remove_episode(user, media_id, line):
@@ -405,14 +459,19 @@ def undo_import(history_import):
         ]
         try:
             if group.media_type == MediaTypes.TV.value:
+                _remove_anime(
+                    user, {line.mal_id for line in lines if line.mal_id}, since
+                )
                 for line in lines:
-                    _remove_episode(user, group.media_id, line)
+                    if not line.mal_id:
+                        _remove_episode(user, group.media_id, line)
                 _remove_empty_show(user, group.media_id, since)
             else:
                 _remove_movie(user, group.media_id, since)
             for line in lines:
                 line.state = ImportLine.MATCHED
-            ImportLine.objects.bulk_update(lines, ["state"])
+                line.mal_id = ""
+            ImportLine.objects.bulk_update(lines, ["state", "mal_id"])
         except Exception as error:
             logger.exception("Could not undo %s", group)
             errors.append(f"{group.media_title or group.name}: {error}")

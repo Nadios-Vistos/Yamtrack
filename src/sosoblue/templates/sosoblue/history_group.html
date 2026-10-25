@@ -72,6 +72,7 @@
                 {% if line.state == "unmatched" %}<span class="text-amber-400">✗</span>{% elif line.state == "covered" %}<span title="{% trans 'Whole season watched' %}">≈</span>{% else %}<span class="text-green-400">✓</span>{% endif %}
                 {{ line.watched_at|date:"SHORT_DATE_FORMAT" }} · {{ line.raw }}
                 {% if line.matched_episode %}<span class="text-gray-300">→ S{{ line.matched_season }}E{{ line.matched_episode }}</span>{% endif %}
+                {% if line.mal_id %}<span class="text-gray-300">· {% trans "Anime" %}</span>{% endif %}
               </li>
             {% endif %}
           {% endfor %}

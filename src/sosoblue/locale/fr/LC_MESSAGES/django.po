@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 18:48+0100\n"
+"POT-Creation-Date: 2026-10-25 19:32+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -68,6 +68,19 @@ msgstr "Annulation en cours"
 msgctxt "history import status"
 msgid "Undone"
 msgstr "Annulé"
+
+#: tasks.py:63
+msgid "The anime list could not be downloaded. Try again later."
+msgstr "La liste des animés n'a pas pu être téléchargée. Réessayez plus tard."
+
+#: tasks.py:75
+#, python-format
+msgid "Anime moved to the Anime section. %(report)s"
+msgstr "Animés rangés dans la section Animés. %(report)s"
+
+#: tasks.py:79
+msgid "No anime found among the series."
+msgstr "Aucun animé trouvé parmi les séries."
 
 #: templates/sosoblue/detail_hero.html:25
 #: templates/sosoblue/home_top_blocks.html:22
@@ -232,6 +245,10 @@ msgstr "Utiliser cette page TMDB"
 #: templates/sosoblue/history_group.html:72
 msgid "Whole season watched"
 msgstr "Saison vue en entier"
+
+#: templates/sosoblue/history_group.html:75
+msgid "Anime"
+msgstr "Animé"
 
 #: templates/sosoblue/history_list.html:11
 msgid ""
@@ -404,11 +421,30 @@ msgstr "Jusqu'à %(age)s+"
 msgid "Save"
 msgstr "Enregistrer"
 
-#: templates/sosoblue/household.html:140
+#: templates/sosoblue/household.html:144
+msgid "Move anime to the Anime section"
+msgstr "Ranger les animés dans la section Animés"
+
+#: templates/sosoblue/household.html:145
+msgid ""
+"Imported anime arrive as series. This moves those found on MyAnimeList to "
+"the Anime section, with their dates, for every member who has the Anime "
+"section enabled. Western cartoons stay in series."
+msgstr ""
+"Les animés importés arrivent comme des séries. Ceci déplace ceux qui "
+"existent sur MyAnimeList vers la section Animés, avec leurs dates, pour "
+"chaque membre dont la section Animés est activée. Les dessins animés "
+"occidentaux restent dans les séries."
+
+#: templates/sosoblue/household.html:147
+msgid "Move anime"
+msgstr "Ranger les animés"
+
+#: templates/sosoblue/household.html:151
 msgid "Empty an account"
 msgstr "Vider un compte"
 
-#: templates/sosoblue/household.html:142
+#: templates/sosoblue/household.html:153
 msgid ""
 "Deletes every series (with seasons and episodes) and every movie of the "
 "account. Other media, lists and settings stay. This cannot be undone. To "
@@ -420,12 +456,12 @@ msgstr ""
 "Impossible de revenir en arrière. Pour retirer seulement ce qu'un import a "
 "ajouté, utilisez plutôt « Annuler cet import » sur son rapport."
 
-#: templates/sosoblue/household.html:158
+#: templates/sosoblue/household.html:169
 #, python-format
 msgid "Type %(name)s to confirm"
 msgstr "Tapez %(name)s pour confirmer"
 
-#: templates/sosoblue/household.html:160
+#: templates/sosoblue/household.html:171
 msgid "Empty"
 msgstr "Vider"
 
@@ -605,6 +641,12 @@ msgid ""
 msgstr ""
 "Le compte de %(name)s a été vidé : %(shows)s séries (%(episodes)s épisodes) "
 "et %(movies)s films supprimés."
+
+#: views.py:97
+msgid "Anime are being moved. A message will tell you which ones when done."
+msgstr ""
+"Rangement des animés en cours. Un message vous dira lesquels une fois "
+"terminé."
 
 #: views_history.py:76
 msgid "Enter the server address (starting with http://) and the token."

@@ -233,6 +233,9 @@ class RunnerTests(TestCase):
 
     def setUp(self):
         """Create the user and a Netflix import."""
+        patcher = patch("sosoblue.history.runner.anime.load_mapping", return_value=None)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.user = get_user_model().objects.create_user(
             username="nicolas",
             password="12345",  # noqa: S106
@@ -538,6 +541,9 @@ class UndoTests(TestCase):
 
     def setUp(self):
         """Mock TMDB and create a user with an earlier view."""
+        patcher = patch("sosoblue.history.runner.anime.load_mapping", return_value=None)
+        patcher.start()
+        self.addCleanup(patcher.stop)
         from sosoblue.tests.test_household import (  # noqa: PLC0415
             fake_movie,
             fake_tv,

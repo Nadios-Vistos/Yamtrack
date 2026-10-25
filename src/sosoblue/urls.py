@@ -12,6 +12,11 @@ urlpatterns = [
     path("household/", views.household_page, name="household"),
     path("household/settings/", views.household_settings, name="household_settings"),
     path("household/clear/", views.household_clear, name="household_clear"),
+    path(
+        "household/anime/",
+        views.household_convert_anime,
+        name="household_convert_anime",
+    ),
     path("household/panel/", views.household_panel, name="household_panel"),
     path("household/toggle/", views.household_toggle, name="household_toggle"),
     path("household/align/", views.household_align, name="household_align"),

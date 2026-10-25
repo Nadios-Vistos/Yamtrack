@@ -216,6 +216,7 @@ class ImportLine(models.Model):
     watched_at = models.DateTimeField()
     matched_season = models.PositiveIntegerField(null=True, blank=True)
     matched_episode = models.PositiveIntegerField(null=True, blank=True)
+    mal_id = models.CharField(max_length=20, blank=True, default="")
     state = models.CharField(max_length=10, default=UNMATCHED)
 
     class Meta:
