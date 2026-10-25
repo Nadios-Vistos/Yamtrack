@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load i18n app_tags %}
+
+{% block title %}
+  {% trans "Household" %} - YamTrack
+{% endblock title %}
+
+{% block content %}
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">{% trans "Household" %}</h1>
+    <p class="text-gray-400">{% trans "What everyone is watching, and the series you follow together." %}</p>
+  </div>
+
+  <section class="sb-section">
+    <h2 class="text-xl font-bold mb-4">{% trans "Lately" %}</h2>
+    <div class="sb-columns">
+      {% for member, entries in activity %}
+        <div class="bg-[#2a2f35] rounded-lg p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="sb-chip sb-chip-static">{{ member.initial }}</span>
+            <span class="font-semibold">{{ member.name }}</span>
+            {% if member.age_limit %}<span class="sb-rating">{{ member.age_limit }}+</span>{% endif %}
+          </div>
+          {% if entries %}
+            <ul class="space-y-2">
+              {% for entry in entries %}
+                <li>
+                  <a href="{{ entry.item|media_url }}"
+                     class="flex items-center gap-3 p-1 rounded-md hover:bg-[#39404b] transition-colors">
+                    <img alt="{{ entry.item.title }}"
+                         class="lazyload w-10 h-10 object-cover rounded-md shrink-0 bg-[#3e454d]"
+                         data-src="{{ entry.item.image }}"
+                         src="{{ IMG_NONE }}">
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium line-clamp-1">{{ entry.item.title }}</p>
+                      <p class="text-xs text-gray-400">
+                        {% if entry.season is not None %}
+                          {% blocktrans with season=entry.season episode=entry.episode %}S{{ season }} E{{ episode }}{% endblocktrans %}
+                          {% if entry.count > 1 %}
+                            · {% blocktrans count counter=entry.count %}{{ counter }} episode{% plural %}{{ counter }} episodes{% endblocktrans %}
+                          {% endif %}
+                        {% else %}
+                          {% trans "Movie" %}
+                        {% endif %}
+                        · {{ entry.when|date_format:user }}
+                      </p>
+                    </div>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-sm text-gray-400">{% trans "Nothing watched in the last 30 days." %}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="sb-section">
+    <h2 class="text-xl font-bold mb-4">{% trans "Series you follow together" %}</h2>
+    {% if shared %}
+      <div class="bg-[#2a2f35] rounded-lg divide-y divide-white/5">
+        {% for show in shared %}
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3">
+            <a href="{{ show.item|media_url }}" class="flex items-center gap-3 min-w-0">
+              <img alt="{{ show.item.title }}"
+                   class="lazyload w-10 h-10 object-cover rounded-md shrink-0 bg-[#3e454d]"
+                   data-src="{{ show.item.image }}"
+                   src="{{ IMG_NONE }}">
+              <div class="min-w-0">
+                <p class="text-sm font-medium line-clamp-1 hover:text-indigo-400 transition-colors">{{ show.item.title }}</p>
+                {% if show.ahead %}
+                  <p class="text-xs text-gray-400">{% blocktrans with name=show.ahead.name %}{{ name }} is ahead{% endblocktrans %}</p>
+                {% else %}
+                  <p class="text-xs text-gray-400">{% trans "Everyone is at the same point" %}</p>
+                {% endif %}
+              </div>
+            </a>
+            <div class="flex flex-wrap gap-3">
+              {% for entry in show.progress %}
+                <div class="flex items-center gap-2">
+                  <span class="sb-chip sb-chip-small {% if not entry.behind %}sb-chip-on{% endif %}"
+                        title="{{ entry.member.name }}">{{ entry.member.initial }}</span>
+                  <span class="text-sm text-gray-200">
+                    {% if entry.latest %}
+                      {% blocktrans with season=entry.latest.0 episode=entry.latest.1 %}S{{ season }} E{{ episode }}{% endblocktrans %}
+                    {% else %}
+                      –
+                    {% endif %}
+                    {% if entry.behind %}
+                      <span class="text-xs text-gray-400">({% blocktrans count counter=entry.behind %}{{ counter }} to catch up{% plural %}{{ counter }} to catch up{% endblocktrans %})</span>
+                    {% endif %}
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-gray-400">{% trans "No series followed by several members yet." %}</p>
+    {% endif %}
+  </section>
+
+  {% if user.is_superuser %}
+    <section class="sb-section">
+      <h2 class="text-xl font-bold mb-2">{% trans "Household settings" %}</h2>
+      <p class="text-sm text-gray-400 mb-4">{% trans "An age limit hides content rated above it from that member, and prevents marking it as watched for them. Ratings come from TMDB, French ones first." %}</p>
+      <form method="post"
+            action="{% url 'sosoblue:household_settings' %}"
+            class="bg-[#2a2f35] rounded-lg p-4 space-y-3">
+        {% csrf_token %}
+        {% for member in members %}
+          <div class="flex items-center justify-between gap-4">
+            <label for="age_limit_{{ member.id }}" class="flex items-center gap-2">
+              <span class="sb-chip sb-chip-static">{{ member.initial }}</span>
+              <span>{{ member.name }}</span>
+            </label>
+            <select id="age_limit_{{ member.id }}"
+                    name="age_limit_{{ member.id }}"
+                    class="bg-[#39404b] rounded-md px-3 py-2 text-sm">
+              <option value="" {% if not member.age_limit %}selected{% endif %}>{% trans "No limit" %}</option>
+              {% for age in age_limit_choices %}
+                <option value="{{ age }}" {% if member.age_limit == age %}selected{% endif %}>
+                  {% blocktrans %}Up to {{ age }}+{% endblocktrans %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endfor %}
+        <div class="flex justify-end">
+          <button class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors cursor-pointer">
+            {% trans "Save" %}
+          </button>
+        </div>
+      </form>
+    </section>
+  {% endif %}
+{% endblock content %}

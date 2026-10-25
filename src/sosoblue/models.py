@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import pgettext_lazy
 
@@ -61,3 +62,47 @@ class SeriesStatus(models.Model):
     def state(self):
         """Return the simplified state of the show."""
         return state_from_tmdb(self.tmdb_status)
+
+
+class HouseholdProfile(models.Model):
+    """Household settings of a user, set by the administrator."""
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="household_profile",
+    )
+    age_limit = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        help_text="Highest age rating this member may be shown or given.",
+    )
+
+    def __str__(self):
+        """Return the username and the age limit."""
+        return f"{self.user} ({self.age_limit or '-'})"
+
+
+class ContentRating(models.Model):
+    """Age rating of a TMDB movie or TV show, fetched once and kept."""
+
+    media_type = models.CharField(max_length=10)
+    media_id = models.CharField(max_length=36)
+    age = models.PositiveSmallIntegerField(null=True, blank=True)
+    certification = models.CharField(max_length=20, blank=True, default="")
+    country = models.CharField(max_length=2, blank=True, default="")
+    fetched_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        """Meta options for the model."""
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["media_type", "media_id"],
+                name="sosoblue_contentrating_unique_media",
+            ),
+        ]
+
+    def __str__(self):
+        """Return the media and its rating."""
+        return f"{self.media_type} {self.media_id}: {self.certification or '?'}"

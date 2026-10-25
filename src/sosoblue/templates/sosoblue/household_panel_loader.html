@@ -1,0 +1,7 @@
+{% if media.source == "tmdb" %}
+  {% if media.media_type == "tv" or media.media_type == "movie" or media.media_type == "season" %}
+    <div hx-get="{% url 'sosoblue:household_panel' %}?media_type={{ media.media_type }}&media_id={{ media.media_id }}{% if media.media_type == 'season' %}&season_number={{ media.season_number }}{% endif %}"
+         hx-trigger="load"
+         hx-swap="outerHTML"></div>
+  {% endif %}
+{% endif %}

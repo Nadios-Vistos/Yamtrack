@@ -3,7 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
-"POT-Creation-Date: 2026-10-25 13:12+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-25 13:59+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -13,27 +14,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: models.py:10
+#: models.py:11
 msgctxt "tv show state"
 msgid "Ongoing series"
 msgstr "Série en cours"
 
-#: models.py:11
+#: models.py:12
 msgctxt "tv show state"
 msgid "In production"
 msgstr "En production"
 
-#: models.py:12
+#: models.py:13
 msgctxt "tv show state"
 msgid "Series ended"
 msgstr "Série terminée"
 
-#: models.py:13
+#: models.py:14
 msgctxt "tv show state"
 msgid "Series canceled"
 msgstr "Série annulée"
 
 #: templates/sosoblue/episode_label.html:1
+#: templates/sosoblue/household.html:38 templates/sosoblue/household.html:87
 #, python-format
 msgid "S%(season)s E%(episode)s"
 msgstr "S%(season)s E%(episode)s"
@@ -42,6 +44,151 @@ msgstr "S%(season)s E%(episode)s"
 #, python-format
 msgid "Season %(season)s"
 msgstr "Saison %(season)s"
+
+#: templates/sosoblue/household.html:5 templates/sosoblue/household.html:10
+#: templates/sosoblue/household_panel.html:4
+#: templates/sosoblue/sidebar_links.html:23
+msgid "Household"
+msgstr "Foyer"
+
+#: templates/sosoblue/household.html:11
+msgid "What everyone is watching, and the series you follow together."
+msgstr "Ce que chacun regarde, et les séries que vous suivez ensemble."
+
+#: templates/sosoblue/household.html:15
+msgid "Lately"
+msgstr "Ces derniers temps"
+
+#: templates/sosoblue/household.html:40
+#, python-format
+#| msgid "S%(season)s E%(episode)s"
+msgid "%(counter)s episode"
+msgid_plural "%(counter)s episodes"
+msgstr[0] "%(counter)s épisode"
+msgstr[1] "%(counter)s épisodes"
+
+#: templates/sosoblue/household.html:43
+msgid "Movie"
+msgstr "Film"
+
+#: templates/sosoblue/household.html:53
+msgid "Nothing watched in the last 30 days."
+msgstr "Rien de regardé ces 30 derniers jours."
+
+#: templates/sosoblue/household.html:61
+msgid "Series you follow together"
+msgstr "Séries suivies ensemble"
+
+#: templates/sosoblue/household.html:74
+#, python-format
+msgid "%(name)s is ahead"
+msgstr "%(name)s a de l'avance"
+
+#: templates/sosoblue/household.html:76
+msgid "Everyone is at the same point"
+msgstr "Tout le monde en est au même point"
+
+#: templates/sosoblue/household.html:92
+#, python-format
+msgid "%(counter)s to catch up"
+msgid_plural "%(counter)s to catch up"
+msgstr[0] "%(counter)s à rattraper"
+msgstr[1] "%(counter)s à rattraper"
+
+#: templates/sosoblue/household.html:102
+msgid "No series followed by several members yet."
+msgstr "Aucune série suivie par plusieurs membres pour l'instant."
+
+#: templates/sosoblue/household.html:108
+msgid "Household settings"
+msgstr "Réglages du foyer"
+
+#: templates/sosoblue/household.html:109
+msgid ""
+"An age limit hides content rated above it from that member, and prevents "
+"marking it as watched for them. Ratings come from TMDB, French ones first."
+msgstr ""
+"Une limite d'âge masque à ce membre les contenus classés au-dessus, et "
+"empêche de les marquer comme vus pour lui. Les classifications viennent de "
+"TMDB, en priorité la française."
+
+#: templates/sosoblue/household.html:123
+msgid "No limit"
+msgstr "Aucune limite"
+
+#: templates/sosoblue/household.html:126
+#, python-format
+msgid "Up to %(age)s+"
+msgstr "Jusqu'à %(age)s+"
+
+#: templates/sosoblue/household.html:134
+msgid "Save"
+msgstr "Enregistrer"
+
+#: templates/sosoblue/household_panel.html:6
+#, python-format
+msgid "Age rating (%(country)s)"
+msgstr "Classification (%(country)s)"
+
+#: templates/sosoblue/household_panel.html:22
+#, python-format
+msgid "Limited to %(age)s+"
+msgstr "Limité à %(age)s+"
+
+#: templates/sosoblue/household_panel.html:24
+msgid "Watched"
+msgstr "Vu"
+
+#: templates/sosoblue/household_panel.html:24
+msgid "Not watched"
+msgstr "Pas vu"
+
+#: templates/sosoblue/household_panel.html:26
+#, python-format
+#| msgid "S%(season)s E%(episode)s"
+msgid "Up to S%(season)s E%(episode)s · %(counter)s episode"
+msgid_plural "Up to S%(season)s E%(episode)s · %(counter)s episodes"
+msgstr[0] "Jusqu'à S%(season)s E%(episode)s · %(counter)s épisode"
+msgstr[1] "Jusqu'à S%(season)s E%(episode)s · %(counter)s épisodes"
+
+#: templates/sosoblue/household_panel.html:28
+msgid "Not started"
+msgstr "Pas commencé"
+
+#: templates/sosoblue/household_panel.html:37
+#: templates/sosoblue/household_panel.html:71
+#, python-format
+msgid "Remove for %(name)s"
+msgstr "Retirer pour %(name)s"
+
+#: templates/sosoblue/household_panel.html:37
+#: templates/sosoblue/household_panel.html:71
+#, python-format
+msgid "Watched together with %(name)s"
+msgstr "Vu ensemble avec %(name)s"
+
+#: templates/sosoblue/household_panel.html:44
+#, python-format
+msgid "Mark for %(name)s every episode you watched"
+msgstr "Marquer pour %(name)s tous les épisodes que vous avez vus"
+
+#: templates/sosoblue/household_panel.html:47
+#, python-format
+msgid "Mark %(counter)s episode as watched for %(name)s?"
+msgid_plural "Mark %(counter)s episodes as watched for %(name)s?"
+msgstr[0] "Marquer %(counter)s épisode comme vu pour %(name)s ?"
+msgstr[1] "Marquer %(counter)s épisodes comme vus pour %(name)s ?"
+
+#: templates/sosoblue/household_panel.html:48
+#, python-format
+msgid "+%(counter)s ep."
+msgid_plural "+%(counter)s ep."
+msgstr[0] "+%(counter)s ép."
+msgstr[1] "+%(counter)s ép."
+
+#: templates/sosoblue/household_panel.html:57
+msgid "Who watched what"
+msgstr "Qui a vu quoi"
 
 #: templates/sosoblue/sidebar_links.html:11 templates/sosoblue/waiting.html:5
 #: templates/sosoblue/waiting.html:11
@@ -89,16 +236,20 @@ msgstr "Aucune date de sortie annoncée pour vos séries pour l'instant."
 msgid "Coming back, date unknown"
 msgstr "Suite confirmée, date inconnue"
 
-#: templates/sosoblue/waiting.html:68
+#: templates/sosoblue/waiting.html:66
 msgid "None of your up-to-date series has been renewed yet."
 msgstr "Aucune de vos séries à jour n'a encore été renouvelée."
 
-#: templates/sosoblue/waiting.html:74
+#: templates/sosoblue/waiting.html:72
 msgid "Status not fetched yet"
 msgstr "Statut pas encore récupéré"
 
-#: views.py:28
+#: views.py:30
 msgid "Series statuses are being refreshed. Reload the page in a minute."
 msgstr ""
 "Les statuts des séries sont en cours d'actualisation. Rechargez la page dans"
 " une minute."
+
+#: views.py:58
+msgid "Household settings saved."
+msgstr "Réglages du foyer enregistrés."

@@ -1,0 +1,83 @@
+{% load i18n %}
+<div id="sb-household-panel" class="mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold">{% trans "Household" %}</h2>
+    {% if rating.certification %}
+      <span class="sb-rating" title="{% blocktrans with country=rating.country %}Age rating ({{ country }}){% endblocktrans %}">{{ rating.certification }}</span>
+    {% endif %}
+  </div>
+
+  <div class="bg-[#2a2f35] rounded-lg divide-y divide-white/5"
+       hx-target="#sb-household-panel"
+       hx-swap="outerHTML"
+       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    {% for row in rows %}
+      <div class="flex items-center justify-between gap-x-3 px-4 py-2.5">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="sb-chip sb-chip-static">{{ row.member.initial }}</span>
+          <div class="min-w-0">
+            <p class="text-sm text-gray-200 truncate">{{ row.member.name }}</p>
+            <p class="text-xs text-gray-400">
+              {% if not row.allowed %}
+                {% blocktrans with age=row.member.age_limit %}Limited to {{ age }}+{% endblocktrans %}
+              {% elif media_type == "movie" %}
+                {% if row.watched %}{% trans "Watched" %}{% else %}{% trans "Not watched" %}{% endif %}
+              {% elif row.latest %}
+                {% blocktrans with season=row.latest.0 episode=row.latest.1 count counter=row.count %}Up to S{{ season }} E{{ episode }} · {{ counter }} episode{% plural %}Up to S{{ season }} E{{ episode }} · {{ counter }} episodes{% endblocktrans %}
+              {% else %}
+                {% trans "Not started" %}
+              {% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% if not row.is_viewer and row.allowed %}
+          {% if media_type == "movie" %}
+            <button class="sb-chip {% if row.watched %}sb-chip-on{% endif %}"
+                    title="{% if row.watched %}{% blocktrans with name=row.member.name %}Remove for {{ name }}{% endblocktrans %}{% else %}{% blocktrans with name=row.member.name %}Watched together with {{ name }}{% endblocktrans %}{% endif %}"
+                    hx-post="{% url 'sosoblue:household_toggle' %}"
+                    hx-vals='{"media_type": "movie", "media_id": "{{ media_id }}", "member": "{{ row.member.id }}"}'>
+              {% include "app/icons/checkmark.svg" with classes="w-4 h-4" %}
+            </button>
+          {% elif row.missing %}
+            <button class="sb-action"
+                    title="{% blocktrans with name=row.member.name %}Mark for {{ name }} every episode you watched{% endblocktrans %}"
+                    hx-post="{% url 'sosoblue:household_align' %}"
+                    hx-vals='{"media_type": "{{ media_type }}", "media_id": "{{ media_id }}", "season_number": "{{ season_number|default_if_none:'' }}", "member": "{{ row.member.id }}"}'
+                    hx-confirm="{% blocktrans with name=row.member.name count counter=row.missing %}Mark {{ counter }} episode as watched for {{ name }}?{% plural %}Mark {{ counter }} episodes as watched for {{ name }}?{% endblocktrans %}">
+              {% blocktrans count counter=row.missing %}+{{ counter }} ep.{% plural %}+{{ counter }} ep.{% endblocktrans %}
+            </button>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {% if episodes %}
+      <div class="px-4 py-2.5">
+        <p class="text-xs font-semibold text-gray-400 uppercase mb-2">{% trans "Who watched what" %}</p>
+        <div class="space-y-2">
+          {% for episode in episodes %}
+            <div class="flex items-center justify-between gap-x-2">
+              <p class="text-sm text-gray-200 truncate" title="{{ episode.title }}">
+                <span class="text-gray-400">{{ episode.number }}.</span> {{ episode.title }}
+              </p>
+              <div class="flex gap-1 shrink-0">
+                {% for row, seen in episode.chips %}
+                  {% if row.is_viewer or not row.allowed %}
+                    <span class="sb-chip sb-chip-small {% if seen %}sb-chip-on{% endif %} {% if not row.allowed %}sb-chip-locked{% endif %}"
+                          title="{{ row.member.name }}">{{ row.member.initial }}</span>
+                  {% else %}
+                    <button class="sb-chip sb-chip-small {% if seen %}sb-chip-on{% endif %}"
+                            title="{% if seen %}{% blocktrans with name=row.member.name %}Remove for {{ name }}{% endblocktrans %}{% else %}{% blocktrans with name=row.member.name %}Watched together with {{ name }}{% endblocktrans %}{% endif %}"
+                            hx-post="{% url 'sosoblue:household_toggle' %}"
+                            hx-vals='{"media_type": "season", "media_id": "{{ media_id }}", "season_number": "{{ season_number }}", "episode": "{{ episode.number }}", "member": "{{ row.member.id }}"}'>{{ row.member.initial }}</button>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>

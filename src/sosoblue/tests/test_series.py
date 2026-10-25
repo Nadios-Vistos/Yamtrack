@@ -156,8 +156,9 @@ class RefreshTests(SeriesTestCase):
         self.make_show("1", Status.COMPLETED.value)
         self.assertEqual(series.refresh_series_status(), 0)
 
+    @patch("sosoblue.signals.ratings.fill_missing")
     @patch("sosoblue.series.refresh_series_status")
-    def test_signal_after_calendar_reload(self, mock_refresh):
+    def test_signal_after_calendar_reload(self, mock_refresh, mock_ratings):
         """The calendar reload triggers a refresh of the same items."""
         sender = SimpleNamespace(name="Reload calendar")
         refresh_after_calendar_reload(
@@ -166,6 +167,7 @@ class RefreshTests(SeriesTestCase):
             state="SUCCESS",
         )
         mock_refresh.assert_called_once_with(["x"])
+        mock_ratings.assert_called_once_with(["x"])
 
         mock_refresh.reset_mock()
         refresh_after_calendar_reload(
