@@ -78,6 +78,9 @@ jobs:
           if [ -n "${{ secrets.COMICVINE_API }}" ]; then echo "COMICVINE_API=${{ secrets.COMICVINE_API }}" >> $GITHUB_ENV; fi
 
       - name: Run Tests
+        # Some upstream tests call live APIs; a rate limit can make them wait
+        # for hours (Retry-After), so cap the step instead of hanging.
+        timeout-minutes: 20
         run: |
           uv run coverage run src/manage.py test app users integrations lists events sosoblue --parallel
 
