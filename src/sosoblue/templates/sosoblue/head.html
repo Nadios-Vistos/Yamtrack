@@ -13,7 +13,7 @@
     if (!data || !data.selectedType) return;
     var label = "{% trans 'Search' context 'search placeholder' %}";
     data.getPlaceholder = function () {
-      return label + " " + this.selectedType.display.toLowerCase() + "…";
+      return label + " " + this.selectedType.display.toLowerCase() + "...";
     };
   });
 </script>
