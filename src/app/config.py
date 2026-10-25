@@ -228,7 +228,8 @@ MEDIA_TYPE_CONFIG = {
     },
     MediaTypes.BOOK.value: {
         "sources": [Sources.HARDCOVER, Sources.OPENLIBRARY],
-        "default_source": Sources.HARDCOVER,
+        # SosoBlue: Hardcover's shared token is often rate limited
+        "default_source": Sources.OPENLIBRARY,
         "sample_query": "The Great Gatsby",
         "unicode_icon": "📖",
         "verb": (
