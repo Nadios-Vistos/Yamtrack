@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 16:42+0100\n"
+"POT-Creation-Date: 2026-10-25 17:39+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -59,6 +59,16 @@ msgctxt "history import status"
 msgid "Failed"
 msgstr "Échec"
 
+#: models.py:127
+msgctxt "history import status"
+msgid "Undoing"
+msgstr "Annulation en cours"
+
+#: models.py:128
+msgctxt "history import status"
+msgid "Undone"
+msgstr "Annulé"
+
 #: templates/sosoblue/episode_label.html:1
 #: templates/sosoblue/household.html:38 templates/sosoblue/household.html:87
 #, python-format
@@ -79,17 +89,26 @@ msgid "Import a viewing history"
 msgstr "Importer un historique"
 
 #: templates/sosoblue/history_detail.html:22
+msgid "This import was undone: what it added has been removed."
+msgstr "Cet import a été annulé : ce qu'il avait ajouté a été supprimé."
+
+#: templates/sosoblue/history_detail.html:25
+#: templates/sosoblue/history_detail.html:65
+msgid "Delete this report"
+msgstr "Supprimer ce rapport"
+
+#: templates/sosoblue/history_detail.html:33
 msgid "The history could not be read."
 msgstr "L'historique n'a pas pu être lu."
 
-#: templates/sosoblue/history_detail.html:29
+#: templates/sosoblue/history_detail.html:40
 #, python-format
 msgid "%(counter)s title found."
 msgid_plural "%(counter)s titles found."
 msgstr[0] "%(counter)s titre trouvé."
 msgstr[1] "%(counter)s titres trouvés."
 
-#: templates/sosoblue/history_detail.html:30
+#: templates/sosoblue/history_detail.html:41
 msgid ""
 "Check the ones at the top (not found, unrecognised episodes or above the age"
 " limit), correct them with a TMDB link or leave them out, then import."
@@ -98,18 +117,18 @@ msgstr ""
 "la limite d'âge), corrigez-les avec un lien TMDB ou laissez-les de côté, "
 "puis importez."
 
-#: templates/sosoblue/history_detail.html:34
+#: templates/sosoblue/history_detail.html:45
 msgid "Import the selection"
 msgstr "Importer la sélection"
 
-#: templates/sosoblue/history_detail.html:38
+#: templates/sosoblue/history_detail.html:49
 #, python-format
 msgid "%(counter)s view added"
 msgid_plural "%(counter)s views added"
 msgstr[0] "%(counter)s visionnage ajouté"
 msgstr[1] "%(counter)s visionnages ajoutés"
 
-#: templates/sosoblue/history_detail.html:39
+#: templates/sosoblue/history_detail.html:50
 #: templates/sosoblue/history_group.html:36
 #, python-format
 msgid "%(counter)s already there"
@@ -117,16 +136,20 @@ msgid_plural "%(counter)s already there"
 msgstr[0] "%(counter)s déjà présent"
 msgstr[1] "%(counter)s déjà présents"
 
-#: templates/sosoblue/history_detail.html:41
+#: templates/sosoblue/history_detail.html:52
 #, python-format
 msgid "%(counter)s title left out."
 msgid_plural "%(counter)s titles left out."
 msgstr[0] "%(counter)s titre laissé de côté."
 msgstr[1] "%(counter)s titres laissés de côté."
 
-#: templates/sosoblue/history_detail.html:46
-msgid "Delete this report"
-msgstr "Supprimer ce rapport"
+#: templates/sosoblue/history_detail.html:59
+msgid "Remove from this account everything this import added?"
+msgstr "Retirer de ce compte tout ce que cet import a ajouté ?"
+
+#: templates/sosoblue/history_detail.html:61
+msgid "Undo this import"
+msgstr "Annuler cet import"
 
 #: templates/sosoblue/history_group.html:7
 msgid "Leave out"
@@ -263,14 +286,18 @@ msgid "Matching the titles with TMDB…"
 msgstr "Recherche des titres sur TMDB…"
 
 #: templates/sosoblue/history_progress.html:10
+msgid "Removing what this import added…"
+msgstr "Suppression de ce que cet import a ajouté…"
+
+#: templates/sosoblue/history_progress.html:12
 msgid "Importing…"
 msgstr "Import en cours…"
 
-#: templates/sosoblue/history_progress.html:14
+#: templates/sosoblue/history_progress.html:16
 msgid "Reading the history…"
 msgstr "Lecture de l'historique…"
 
-#: templates/sosoblue/history_progress.html:17
+#: templates/sosoblue/history_progress.html:19
 msgid "You can leave this page, it carries on in the background."
 msgstr "Vous pouvez quitter cette page, le travail continue en arrière-plan."
 
@@ -348,6 +375,31 @@ msgstr "Jusqu'à %(age)s+"
 #: templates/sosoblue/household.html:134
 msgid "Save"
 msgstr "Enregistrer"
+
+#: templates/sosoblue/household.html:140
+msgid "Empty an account"
+msgstr "Vider un compte"
+
+#: templates/sosoblue/household.html:142
+msgid ""
+"Deletes every series (with seasons and episodes) and every movie of the "
+"account. Other media, lists and settings stay. This cannot be undone. To "
+"remove only what an import added, use “Undo this import” on its report "
+"instead."
+msgstr ""
+"Supprime toutes les séries (avec leurs saisons et épisodes) et tous les "
+"films du compte. Les autres médias, les listes et les réglages restent. "
+"Impossible de revenir en arrière. Pour retirer seulement ce qu'un import a "
+"ajouté, utilisez plutôt « Annuler cet import » sur son rapport."
+
+#: templates/sosoblue/household.html:158
+#, python-format
+msgid "Type %(name)s to confirm"
+msgstr "Tapez %(name)s pour confirmer"
+
+#: templates/sosoblue/household.html:160
+msgid "Empty"
+msgstr "Vider"
 
 #: templates/sosoblue/household_panel.html:6
 #, python-format
@@ -495,32 +547,46 @@ msgstr ""
 msgid "Household settings saved."
 msgstr "Réglages du foyer enregistrés."
 
-#: views_history.py:71
+#: views.py:73
+#, python-format
+msgid "Type the name %(name)s exactly to confirm."
+msgstr "Tapez exactement le nom %(name)s pour confirmer."
+
+#: views.py:80
+#, python-format
+msgid ""
+"%(name)s's account was emptied: %(shows)s series (%(episodes)s episodes) and"
+" %(movies)s movies removed."
+msgstr ""
+"Le compte de %(name)s a été vidé : %(shows)s séries (%(episodes)s épisodes) "
+"et %(movies)s films supprimés."
+
+#: views_history.py:76
 msgid "Enter the server address (starting with http://) and the token."
 msgstr "Saisissez l'adresse du serveur (commençant par http://) et le jeton."
 
-#: views_history.py:76
+#: views_history.py:81
 #, python-format
 msgid "Could not reach the Plex server: %(error)s"
 msgstr "Impossible de joindre le serveur Plex : %(error)s"
 
-#: views_history.py:114
+#: views_history.py:119
 msgid "Choose the Plex account to import."
 msgstr "Choisissez le profil Plex à importer."
 
-#: views_history.py:119
+#: views_history.py:124
 msgid "Choose the exported file (20 MB at most)."
 msgstr "Choisissez le fichier exporté (20 Mo au maximum)."
 
-#: views_history.py:128
+#: views_history.py:133
 #, python-format
 msgid "This file does not look like a %(source)s export."
 msgstr "Ce fichier ne ressemble pas à un export %(source)s."
 
-#: views_history.py:247
+#: views_history.py:249
 msgid "Paste a TMDB link, for example https://www.themoviedb.org/tv/1399"
 msgstr "Collez un lien TMDB, par exemple https://www.themoviedb.org/tv/1399"
 
-#: views_history.py:257
+#: views_history.py:259
 msgid "Nothing found on TMDB with this link."
 msgstr "Rien trouvé sur TMDB avec ce lien."

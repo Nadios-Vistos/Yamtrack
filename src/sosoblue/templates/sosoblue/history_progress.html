@@ -6,6 +6,8 @@
   <p class="font-medium mb-2">
     {% if history_import.status == Status.MATCHING %}
       {% trans "Matching the titles with TMDB…" %}
+    {% elif history_import.status == Status.UNDOING %}
+      {% trans "Removing what this import added…" %}
     {% else %}
       {% trans "Importing…" %}
     {% endif %}

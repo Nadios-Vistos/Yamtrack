@@ -403,3 +403,37 @@ class OverviewTests(HouseholdTestCase):
             self.client.post(url, {f"age_limit_{self.meilin.id}": "13"}).status_code,
             400,
         )
+
+
+class ClearTests(HouseholdTestCase):
+    """Emptying an account."""
+
+    def test_clear(self):
+        """An administrator empties an account after typing its name."""
+        household.mark_episode(self.meilin, SHOW_ID, 1, 1)
+        household.mark_movie(self.meilin, MOVIE_ID)
+        household.mark_movie(self.audrey, MOVIE_ID)
+        url = reverse("sosoblue:household_clear")
+
+        self.client.force_login(self.audrey)
+        self.assertEqual(
+            self.client.post(
+                url, {"member": self.meilin.id, "confirm": "meilin"}
+            ).status_code,
+            403,
+        )
+
+        self.client.force_login(self.nicolas)
+        self.client.post(url, {"member": self.meilin.id, "confirm": "wrong"})
+        self.assertTrue(TV.objects.filter(user=self.meilin).exists())
+
+        response = self.client.post(
+            url, {"member": self.meilin.id, "confirm": "meilin"}
+        )
+        self.assertRedirects(response, reverse("sosoblue:household"))
+        self.assertFalse(TV.objects.filter(user=self.meilin).exists())
+        self.assertFalse(
+            Episode.objects.filter(related_season__user=self.meilin).exists()
+        )
+        self.assertFalse(Movie.objects.filter(user=self.meilin).exists())
+        self.assertTrue(Movie.objects.filter(user=self.audrey).exists())

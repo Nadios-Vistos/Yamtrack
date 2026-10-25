@@ -124,6 +124,8 @@ class HistoryImportStatus(models.TextChoices):
     IMPORTING = "importing", pgettext_lazy("history import status", "Importing")
     DONE = "done", pgettext_lazy("history import status", "Imported")
     FAILED = "failed", pgettext_lazy("history import status", "Failed")
+    UNDOING = "undoing", pgettext_lazy("history import status", "Undoing")
+    UNDONE = "undone", pgettext_lazy("history import status", "Undone")
 
 
 class HistoryImport(models.Model):

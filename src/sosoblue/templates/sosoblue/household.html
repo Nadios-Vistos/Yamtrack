@@ -135,6 +135,33 @@
           </button>
         </div>
       </form>
+
+      <details class="bg-[#2a2f35] rounded-lg p-4 mt-4">
+        <summary class="cursor-pointer text-sm text-gray-300 hover:text-white">{% trans "Empty an account" %}</summary>
+        <p class="text-sm text-gray-400 mt-3 mb-4">
+          {% trans "Deletes every series (with seasons and episodes) and every movie of the account. Other media, lists and settings stay. This cannot be undone. To remove only what an import added, use “Undo this import” on its report instead." %}
+        </p>
+        <div class="space-y-3">
+          {% for member in members %}
+            <form method="post"
+                  action="{% url 'sosoblue:household_clear' %}"
+                  class="flex flex-col sm:flex-row sm:items-center gap-2">
+              {% csrf_token %}
+              <input type="hidden" name="member" value="{{ member.id }}">
+              <span class="flex items-center gap-2 sb-member-label">
+                <span class="sb-chip sb-chip-static">{{ member.initial }}</span>
+                <span>{{ member.name }}</span>
+              </span>
+              <input name="confirm"
+                     required
+                     autocomplete="off"
+                     placeholder="{% blocktrans with name=member.name %}Type {{ name }} to confirm{% endblocktrans %}"
+                     class="flex-1 bg-[#39404b] rounded-md px-3 py-2 text-sm">
+              <button class="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors cursor-pointer whitespace-nowrap">{% trans "Empty" %}</button>
+            </form>
+          {% endfor %}
+        </div>
+      </details>
     </section>
   {% endif %}
 {% endblock content %}

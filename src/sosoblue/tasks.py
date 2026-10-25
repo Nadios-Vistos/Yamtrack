@@ -37,3 +37,11 @@ def apply_history_import(import_id):
     history_import = HistoryImport.objects.get(id=import_id)
     runner.apply_import(history_import)
     return f"Imported {history_import.progress} lines"
+
+
+@shared_task(name="Undo viewing history import")
+def undo_history_import(import_id):
+    """Remove what a viewing history import added."""
+    history_import = HistoryImport.objects.get(id=import_id)
+    runner.undo_import(history_import)
+    return f"Undid {history_import.progress} titles"

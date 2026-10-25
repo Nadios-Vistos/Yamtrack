@@ -15,8 +15,19 @@
     </p>
   </div>
 
-  {% if history_import.status == Status.MATCHING or history_import.status == Status.IMPORTING %}
+  {% if history_import.status == Status.MATCHING or history_import.status == Status.IMPORTING or history_import.status == Status.UNDOING %}
     {% include "sosoblue/history_progress.html" %}
+  {% elif history_import.status == Status.UNDONE %}
+    <div class="bg-[#2a2f35] rounded-lg p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <p class="text-sm text-gray-300">{% trans "This import was undone: what it added has been removed." %}</p>
+      <form method="post" action="{% url 'sosoblue:history_delete' history_import.id %}">
+        {% csrf_token %}
+        <button class="px-4 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors cursor-pointer">{% trans "Delete this report" %}</button>
+      </form>
+    </div>
+    {% if history_import.error %}
+      <pre class="bg-[#2a2f35] rounded-lg p-4 mt-6 text-xs text-amber-400 sb-pre">{{ history_import.error }}</pre>
+    {% endif %}
   {% elif history_import.status == Status.FAILED %}
     <div class="bg-[#2a2f35] rounded-lg p-6">
       <p class="font-medium text-red-400 mb-2">{% trans "The history could not be read." %}</p>
@@ -41,10 +52,19 @@
             {% blocktrans count counter=skipped_count %}{{ counter }} title left out.{% plural %}{{ counter }} titles left out.{% endblocktrans %}
           {% endif %}
         </p>
-        <form method="post" action="{% url 'sosoblue:history_delete' history_import.id %}">
-          {% csrf_token %}
-          <button class="px-4 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors cursor-pointer">{% trans "Delete this report" %}</button>
-        </form>
+        <div class="flex gap-2">
+          <form method="post"
+                action="{% url 'sosoblue:history_undo' history_import.id %}"
+                onsubmit="return confirm(this.dataset.confirm)"
+                data-confirm="{% trans 'Remove from this account everything this import added?' %}">
+            {% csrf_token %}
+            <button class="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors cursor-pointer whitespace-nowrap">{% trans "Undo this import" %}</button>
+          </form>
+          <form method="post" action="{% url 'sosoblue:history_delete' history_import.id %}">
+            {% csrf_token %}
+            <button class="px-4 py-2 text-sm bg-[#39404b] hover:bg-[#454d5a] rounded-md transition-colors cursor-pointer whitespace-nowrap">{% trans "Delete this report" %}</button>
+          </form>
+        </div>
       {% endif %}
     </div>
     {% if history_import.error %}

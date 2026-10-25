@@ -99,6 +99,26 @@ def is_allowed(age_limit, age, *, strict):
     return age <= age_limit
 
 
+def clear_tracking(user):
+    """Delete every series and movie a user tracks. Returns what was deleted.
+
+    Seasons and episodes go with their show. Other media types, lists and
+    settings are left alone.
+    """
+    shows = TV.objects.filter(user=user)
+    movies = Movie.objects.filter(user=user)
+    counts = {
+        "shows": shows.count(),
+        "episodes": Episode.objects.filter(related_season__user=user).count(),
+        "movies": movies.count(),
+    }
+    shows.delete()
+    Season.objects.filter(user=user).delete()
+    movies.delete()
+    logger.info("Cleared the series and movies of %s: %s", user, counts)
+    return counts
+
+
 # Marking for another member
 
 

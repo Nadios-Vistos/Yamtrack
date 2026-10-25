@@ -179,3 +179,5 @@ button.sb-chip-on:hover {
 
 .sb-pre { white-space: pre-wrap; }
 .sb-thumb { width: 2.5rem; height: 3.5rem; }
+
+@media (min-width: 40rem) { .sb-member-label { width: 10rem; } }

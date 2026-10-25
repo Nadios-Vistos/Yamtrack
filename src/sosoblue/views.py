@@ -59,6 +59,32 @@ def household_settings(request):
     return redirect("sosoblue:household")
 
 
+@require_POST
+def household_clear(request):
+    """Delete all the series and movies of a member (administrators only)."""
+    if not request.user.is_superuser:
+        return HttpResponseForbidden()
+    member = household.get_member(request.POST.get("member", ""))
+    if member is None:
+        return HttpResponseBadRequest()
+    if request.POST.get("confirm", "").strip() != member.name:
+        messages.error(
+            request,
+            _("Type the name %(name)s exactly to confirm.") % {"name": member.name},
+        )
+        return redirect("sosoblue:household")
+    counts = household.clear_tracking(member.user)
+    messages.success(
+        request,
+        _(
+            "%(name)s's account was emptied: %(shows)s series "
+            "(%(episodes)s episodes) and %(movies)s movies removed.",
+        )
+        % {"name": member.name, **counts},
+    )
+    return redirect("sosoblue:household")
+
+
 def _panel_params(data):
     media_type = data.get("media_type", "")
     media_id = data.get("media_id", "")

@@ -24,6 +24,11 @@ from sosoblue.models import (
 )
 
 MAX_FILE_SIZE = 20 * 1024 * 1024
+RUNNING = (
+    HistoryImportStatus.MATCHING,
+    HistoryImportStatus.IMPORTING,
+    HistoryImportStatus.UNDOING,
+)
 TMDB_REFERENCE = re.compile(r"(?:themoviedb\.org/)?(?:(tv|movie)[/ ])?(\d+)")
 PARSERS = {
     HistorySource.NETFLIX: parsers.parse_netflix,
@@ -175,10 +180,7 @@ def _group_context(group):
 def history_detail(request, import_id):
     """Show the progress, the review screen or the result of an import."""
     history_import = _get_import(request, import_id)
-    running = history_import.status in (
-        HistoryImportStatus.MATCHING,
-        HistoryImportStatus.IMPORTING,
-    )
+    running = history_import.status in RUNNING
     if request.headers.get("HX-Request") and request.GET.get("progress"):
         if not running:
             response = HttpResponse("")
@@ -283,13 +285,22 @@ def history_apply(request, import_id):
 
 
 @require_POST
+def history_undo(request, import_id):
+    """Remove what an import added, in the background."""
+    history_import = _get_import(request, import_id)
+    if history_import.status != HistoryImportStatus.DONE:
+        return HttpResponseBadRequest()
+    history_import.status = HistoryImportStatus.UNDOING
+    history_import.save(update_fields=["status"])
+    tasks.undo_history_import.delay(history_import.id)
+    return redirect("sosoblue:history_detail", import_id=history_import.id)
+
+
+@require_POST
 def history_delete(request, import_id):
     """Delete an import (what was already imported stays)."""
     history_import = _get_import(request, import_id)
-    if history_import.status in (
-        HistoryImportStatus.MATCHING,
-        HistoryImportStatus.IMPORTING,
-    ):
+    if history_import.status in RUNNING:
         return HttpResponseBadRequest()
     history_import.delete()
     return redirect("sosoblue:history_list")

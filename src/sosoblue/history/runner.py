@@ -4,9 +4,10 @@ import logging
 from collections import defaultdict
 
 from django.db import transaction
+from django.db.models import Count
 from django.utils import timezone
 
-from app.models import MediaTypes
+from app.models import TV, Episode, MediaTypes, Movie, Season, Sources, Status
 from app.providers import tmdb
 from sosoblue import household, ratings
 from sosoblue.history import parsers
@@ -327,3 +328,97 @@ def apply_import(history_import):
     history_import.error = "\n".join(errors)
     history_import.finished_at = timezone.now()
     history_import.save(update_fields=["status", "error", "finished_at"])
+
+
+def _remove_episode(user, media_id, line):
+    """Delete the view of an episode that an import added."""
+    episode = Episode.objects.filter(
+        related_season__user=user,
+        item__media_id=media_id,
+        item__source=Sources.TMDB.value,
+        item__media_type=MediaTypes.EPISODE.value,
+        item__season_number=line.matched_season,
+        item__episode_number=line.matched_episode,
+        end_date=line.watched_at,
+    ).first()
+    if episode is not None:
+        episode.delete()
+
+
+def _remove_empty_show(user, media_id, since):
+    """Delete the seasons and show an import created that are now empty."""
+    Season.objects.filter(
+        user=user,
+        item__media_id=media_id,
+        item__source=Sources.TMDB.value,
+        created_at__gte=since,
+    ).annotate(count=Count("episodes")).filter(count=0).delete()
+    for tv in TV.objects.filter(
+        user=user,
+        item__media_id=media_id,
+        item__source=Sources.TMDB.value,
+        created_at__gte=since,
+    ):
+        if not Episode.objects.filter(related_season__related_tv=tv).exists():
+            tv.delete()
+
+
+def _remove_movie(user, media_id, since):
+    """Delete the movie entry an import added, or put it back to planned."""
+    movie = (
+        Movie.objects.filter(
+            user=user,
+            item__media_id=media_id,
+            item__source=Sources.TMDB.value,
+            status=Status.COMPLETED.value,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+    if movie is None:
+        return
+    if movie.created_at >= since:
+        movie.delete()
+    else:
+        movie.status = Status.PLANNING.value
+        movie.end_date = None
+        movie.save()
+
+
+def undo_import(history_import):
+    """Remove what an import added, and only that."""
+    user = history_import.user
+    since = history_import.created_at
+    groups = list(
+        history_import.groups.filter(lines__state=ImportLine.IMPORTED)
+        .distinct()
+        .prefetch_related("lines"),
+    )
+    history_import.total = len(groups)
+    history_import.progress = 0
+    history_import.save(update_fields=["total", "progress"])
+    errors = []
+
+    for group in groups:
+        lines = [
+            line for line in group.lines.all() if line.state == ImportLine.IMPORTED
+        ]
+        try:
+            if group.media_type == MediaTypes.TV.value:
+                for line in lines:
+                    _remove_episode(user, group.media_id, line)
+                _remove_empty_show(user, group.media_id, since)
+            else:
+                _remove_movie(user, group.media_id, since)
+            for line in lines:
+                line.state = ImportLine.MATCHED
+            ImportLine.objects.bulk_update(lines, ["state"])
+        except Exception as error:
+            logger.exception("Could not undo %s", group)
+            errors.append(f"{group.media_title or group.name}: {error}")
+        history_import.progress += 1
+        history_import.save(update_fields=["progress"])
+
+    history_import.status = HistoryImportStatus.UNDONE
+    history_import.error = "\n".join(errors)
+    history_import.save(update_fields=["status", "error"])

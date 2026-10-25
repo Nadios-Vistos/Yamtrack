@@ -531,3 +531,104 @@ class ViewTests(TestCase):
         self.client.force_login(self.meilin)
         url = reverse("sosoblue:history_detail", args=[history_import.id])
         self.assertEqual(self.client.get(url).status_code, 404)
+
+
+class UndoTests(TestCase):
+    """Undoing an import removes only what it added."""
+
+    def setUp(self):
+        """Mock TMDB and create a user with an earlier view."""
+        from sosoblue.tests.test_household import (  # noqa: PLC0415
+            fake_movie,
+            fake_tv,
+            fake_tv_with_seasons,
+        )
+
+        for target, fake in (
+            ("app.providers.tmdb.tv", fake_tv),
+            ("app.providers.tmdb.tv_with_seasons", fake_tv_with_seasons),
+            ("app.providers.tmdb.movie", fake_movie),
+        ):
+            patcher = patch(target, side_effect=fake)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        self.user = get_user_model().objects.create_superuser(
+            username="nicolas",
+            password="12345",  # noqa: S106
+        )
+        self.before = aware(2026, 1, 1, 20, 0)
+        household.mark_episode(self.user, "1399", 1, 1, self.before)
+
+    def test_undo(self):
+        """Imported episodes and movies go, earlier views stay."""
+        from app.models import TV, Episode, Movie  # noqa: PLC0415
+
+        history_import = HistoryImport.objects.create(
+            user=self.user,
+            created_by=self.user,
+            source="netflix",
+            status=HistoryImportStatus.REVIEW,
+        )
+        show = ImportGroup.objects.create(
+            history_import=history_import,
+            kind="tv",
+            name="Show",
+            media_type="tv",
+            media_id="1399",
+        )
+        other = ImportGroup.objects.create(
+            history_import=history_import,
+            kind="tv",
+            name="Other",
+            media_type="tv",
+            media_id="1400",
+        )
+        movie = ImportGroup.objects.create(
+            history_import=history_import,
+            kind="movie",
+            name="Movie",
+            media_type="movie",
+            media_id="603",
+        )
+        when = aware(2026, 10, 1, 20, 0)
+        for group, season, episode in (
+            (show, 1, 1),
+            (show, 1, 2),
+            (other, 1, 1),
+            (movie, None, None),
+        ):
+            ImportLine.objects.create(
+                group=group,
+                raw="x",
+                watched_at=when,
+                matched_season=season,
+                matched_episode=episode,
+                state=ImportLine.MATCHED,
+            )
+        runner.apply_import(history_import)
+        self.assertEqual(Episode.objects.count(), 3)
+        self.assertEqual(Movie.objects.count(), 1)
+
+        self.client.force_login(self.user)
+        with patch("sosoblue.views_history.tasks.undo_history_import.delay") as delay:
+            self.client.post(reverse("sosoblue:history_undo", args=[history_import.id]))
+            delay.assert_called_once_with(history_import.id)
+        history_import.refresh_from_db()
+        self.assertEqual(history_import.status, HistoryImportStatus.UNDOING)
+
+        runner.undo_import(history_import)
+        history_import.refresh_from_db()
+        self.assertEqual(history_import.status, HistoryImportStatus.UNDONE)
+        self.assertEqual(
+            list(Episode.objects.values_list("item__episode_number", "end_date")),
+            [(1, self.before)],
+        )
+        self.assertEqual(
+            list(TV.objects.values_list("item__media_id", flat=True)),
+            ["1399"],
+        )
+        self.assertFalse(Movie.objects.exists())
+        response = self.client.get(
+            reverse("sosoblue:history_detail", args=[history_import.id]),
+        )
+        self.assertContains(response, "undone")

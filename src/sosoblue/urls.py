@@ -9,6 +9,7 @@ urlpatterns = [
     path("up-next/refresh/", views.refresh_status, name="refresh_status"),
     path("household/", views.household_page, name="household"),
     path("household/settings/", views.household_settings, name="household_settings"),
+    path("household/clear/", views.household_clear, name="household_clear"),
     path("household/panel/", views.household_panel, name="household_panel"),
     path("household/toggle/", views.household_toggle, name="household_toggle"),
     path("household/align/", views.household_align, name="household_align"),
@@ -22,6 +23,11 @@ urlpatterns = [
         "history/<int:import_id>/apply/",
         views_history.history_apply,
         name="history_apply",
+    ),
+    path(
+        "history/<int:import_id>/undo/",
+        views_history.history_undo,
+        name="history_undo",
     ),
     path(
         "history/<int:import_id>/delete/",
