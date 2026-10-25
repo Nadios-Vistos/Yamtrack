@@ -133,6 +133,9 @@ def raise_not_found_error(provider, media_id, media_type="item"):
     raise ProviderAPIError(provider, mock_error, error_msg)
 
 
+MAX_RATE_LIMIT_WAIT = 30  # seconds
+
+
 def api_request(
     provider,
     method,
@@ -185,7 +188,19 @@ def api_request(
 
         # handle rate limiting
         if status_code == requests.codes.too_many_requests:
-            seconds_to_wait = int(error_resp.headers.get("Retry-After", 5))
+            try:
+                seconds_to_wait = int(error_resp.headers.get("Retry-After", 5))
+            except ValueError:
+                seconds_to_wait = MAX_RATE_LIMIT_WAIT + 1
+            # A long wait would block the web worker (and every other page)
+            # for as long: give up and report the error instead.
+            if seconds_to_wait > MAX_RATE_LIMIT_WAIT:
+                logger.warning(
+                    "Rate limited for %s seconds by %s, giving up",
+                    seconds_to_wait,
+                    provider,
+                )
+                raise error from None
             logger.warning("Rate limited, waiting %s seconds", seconds_to_wait)
             time.sleep(seconds_to_wait + 3)
             logger.info("Retrying request")
