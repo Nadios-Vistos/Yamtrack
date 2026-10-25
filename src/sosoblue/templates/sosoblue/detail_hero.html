@@ -1,0 +1,29 @@
+{% load i18n sosoblue_tags %}
+{% detail_hero media as hero %}
+{% if hero %}
+  <div class="sb-hero">
+    <div class="sb-hero-art">
+      <img alt="" src="{{ hero.backdrop|default:media.image }}" class="{% if not hero.backdrop %}sb-hero-blur{% endif %}">
+    </div>
+    <div class="sb-hero-head">
+      <img alt="{{ media.title }}" class="sb-hero-poster" src="{{ media.image }}">
+      <div class="sb-hero-text">
+        <h1 class="sb-hero-title">{{ media.title }}</h1>
+        <p class="sb-hero-meta">
+          {% if media.media_type == "season" %}{{ media.season_title }}{% if hero.year %} · {% endif %}{% endif %}{{ hero.year }}
+          {% if hero.certification %}<span class="sb-rating">{{ hero.certification }}</span>{% endif %}
+        </p>
+      </div>
+    </div>
+    {% if hero.next %}
+      <button class="sb-hero-next"
+              hx-post="{% url 'sosoblue:home_mark' %}"
+              hx-vals='{"media_id": "{{ media.media_id }}", "season": "{{ hero.next.0 }}", "episode": "{{ hero.next.1 }}", "refresh": "1"}'
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+              hx-swap="none">
+        {% include "app/icons/checkmark.svg" with classes="w-5 h-5" %}
+        <span>{% blocktrans with season=hero.next.0 episode=hero.next.1 %}Mark S{{ season }} E{{ episode }} as watched{% endblocktrans %}</span>
+      </button>
+    {% endif %}
+  </div>
+{% endif %}

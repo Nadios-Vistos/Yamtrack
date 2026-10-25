@@ -5,6 +5,8 @@ from sosoblue import views, views_history
 app_name = "sosoblue"
 
 urlpatterns = [
+    path("home/top/", views.home_top, name="home_top"),
+    path("home/mark/", views.home_mark, name="home_mark"),
     path("up-next/", views.waiting, name="waiting"),
     path("up-next/refresh/", views.refresh_status, name="refresh_status"),
     path("household/", views.household_page, name="household"),

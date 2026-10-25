@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_POST
 
 from app.models import MediaTypes
-from sosoblue import household, ratings, series, tasks
+from sosoblue import home, household, ratings, series, tasks
 
 
 @require_GET
@@ -176,3 +177,37 @@ def household_align(request):
         return HttpResponseForbidden()
     household.align_episodes(request.user, member.user, media_id)
     return _render_panel(request, media_type, media_id, season_number)
+
+
+def _render_home_top(request):
+    return render(
+        request,
+        "sosoblue/home_top_blocks.html",
+        {
+            "resume": home.resume_shows(request.user),
+            "week": home.week_releases(request.user),
+            "today": timezone.localdate(),
+        },
+    )
+
+
+@require_GET
+def home_top(request):
+    """Return the blocks at the top of the home page."""
+    return _render_home_top(request)
+
+
+@require_POST
+def home_mark(request):
+    """Mark the next episode of a show as watched from the home page."""
+    media_id = request.POST.get("media_id", "")
+    season = request.POST.get("season", "")
+    episode = request.POST.get("episode", "")
+    if not (media_id.isdigit() and season.isdigit() and episode.isdigit()):
+        return HttpResponseBadRequest()
+    household.mark_episode(request.user, media_id, int(season), int(episode))
+    if request.POST.get("refresh"):
+        response = HttpResponse("")
+        response["HX-Refresh"] = "true"
+        return response
+    return _render_home_top(request)

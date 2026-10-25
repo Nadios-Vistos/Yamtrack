@@ -1,0 +1,62 @@
+{% load i18n app_tags %}
+<div id="sb-home-top" class="sb-home-top">
+  {% if resume %}
+    <section>
+      <h2 class="sb-home-title">{% trans "Resume" %}</h2>
+      <div class="sb-rail">
+        {% for show in resume %}
+          <div class="sb-resume">
+            <a href="{% url 'season_details' source='tmdb' media_id=show.item.media_id title=show.item.title|slug season_number=show.season %}"
+               class="sb-resume-link"
+               aria-label="{{ show.item.title }}">
+              <img alt="" class="sb-resume-img" src="{{ show.image }}" loading="lazy">
+            </a>
+            <div class="sb-resume-body">
+              <p class="sb-resume-show">{{ show.item.title }}</p>
+              <p class="sb-resume-episode">
+                {% blocktrans with season=show.season episode=show.episode %}S{{ season }} E{{ episode }}{% endblocktrans %}{% if show.episode_title %} · {{ show.episode_title }}{% endif %}
+              </p>
+              <div class="sb-progress"><div style="width: {{ show.percent }}%"></div></div>
+            </div>
+            <button class="sb-resume-check"
+                    title="{% blocktrans with season=show.season episode=show.episode %}Mark S{{ season }} E{{ episode }} as watched{% endblocktrans %}"
+                    hx-post="{% url 'sosoblue:home_mark' %}"
+                    hx-vals='{"media_id": "{{ show.item.media_id }}", "season": "{{ show.season }}", "episode": "{{ show.episode }}"}'
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    hx-target="#sb-home-top"
+                    hx-swap="outerHTML">
+              {% include "app/icons/checkmark.svg" with classes="w-5 h-5" %}
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if week %}
+    <section>
+      <div class="sb-home-title-row">
+        <h2 class="sb-home-title">{% trans "This week" %}</h2>
+        <a href="{% url 'calendar' %}" class="sb-home-more">{% trans "Calendar" %}</a>
+      </div>
+      <div class="sb-week">
+        {% for day, events in week %}
+          <div class="sb-week-day">
+            <p class="sb-week-label {% if day == today %}sb-week-today{% endif %}">
+              {% if day == today %}{% trans "Today" %}{% else %}{{ day|date:"l j" }}{% endif %}
+            </p>
+            {% for event in events %}
+              <a href="{{ event.item|media_url }}" class="sb-week-row">
+                <img alt="" class="sb-week-img" src="{{ event.item.image }}" loading="lazy">
+                <span class="sb-week-title">{{ event.item.title }}</span>
+                <span class="sb-week-meta">
+                  {% if event.item.season_number %}S{{ event.item.season_number }} {% endif %}{{ event.readable_content_number }}
+                </span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>

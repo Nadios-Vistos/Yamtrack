@@ -23,7 +23,6 @@
 
     {% block extra_head %}
     {% endblock extra_head %}
-    {% include "sosoblue/head.html" %}
 
     <link rel="stylesheet"
           type="text/css"
@@ -53,6 +52,7 @@
     <meta name="msapplication-config"
           content="{% static "favicon/browserconfig.xml" %}">
     <meta name="theme-color" content="#181a1b">
+    {% include "sosoblue/head.html" %}
 
   </head>
 
@@ -318,6 +318,7 @@
               {% endblock content %}
             </div>
           </main>
+          {% include "sosoblue/tab_bar.html" %}
         </div>
       </div>
     {% endblock body %}
