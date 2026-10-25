@@ -3,3 +3,17 @@
 <link rel="preload" href="{% static 'sosoblue/fonts/manrope-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{% static 'sosoblue/sosoblue.css' %}">
 <link rel="stylesheet" href="{% static 'sosoblue/theme.css' %}">
+{% load i18n %}
+<script>
+  {# The search placeholder is built in JavaScript upstream, without translation #}
+  document.addEventListener("alpine:initialized", function () {
+    var form = document.querySelector('form[action="{% url "search" %}"][x-data]');
+    if (!form || !window.Alpine) return;
+    var data = window.Alpine.$data(form);
+    if (!data || !data.selectedType) return;
+    var label = "{% trans 'Search' context 'search placeholder' %}";
+    data.getPlaceholder = function () {
+      return label + " " + this.selectedType.display.toLowerCase() + "…";
+    };
+  });
+</script>
