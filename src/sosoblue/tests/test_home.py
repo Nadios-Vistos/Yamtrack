@@ -102,3 +102,27 @@ class HomeBlocksTests(HouseholdTestCase):
             template.render(Context({"media": media, "request": request})),
             "||-",
         )
+
+
+class InlineBlocksTests(HomeBlocksTests):
+    """The blocks render with the page, so nothing shifts once it loads."""
+
+    def test_home_page_has_blocks(self):
+        """The home page contains the resume block without a second request."""
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "sb-resume-check")
+        self.assertNotContains(response, "sb-skeleton")
+
+    def test_panel_tag(self):
+        """The household panel tag returns the panel of a show."""
+        request = RequestFactory().get("/")
+        request.user = self.nicolas
+        template = Template(
+            "{% load sosoblue_tags %}{% household_panel_context media as panel %}"
+            "{{ panel.media_type }}:{{ panel.rows|length }}",
+        )
+        media = {"source": "tmdb", "media_type": "tv", "media_id": SHOW_ID}
+        self.assertEqual(
+            template.render(Context({"media": media, "request": request})),
+            "tv:3",
+        )

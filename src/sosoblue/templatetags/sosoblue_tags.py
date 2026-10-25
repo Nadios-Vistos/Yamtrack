@@ -86,3 +86,43 @@ def detail_hero(context, media):
         if watched:
             hero["next"] = home.next_episode(watched, aired)
     return hero
+
+
+@register.simple_tag(takes_context=True)
+def home_blocks(context):
+    """Return the resume and this-week blocks of the home page."""
+    from django.utils import timezone  # noqa: PLC0415
+
+    from sosoblue import home  # noqa: PLC0415
+
+    request = context.get("request")
+    if request is None or not request.user.is_authenticated:
+        return None
+    return {
+        "resume": home.resume_shows(request.user),
+        "week": home.week_releases(request.user),
+        "today": timezone.localdate(),
+    }
+
+
+@register.simple_tag(takes_context=True)
+def household_panel_context(context, media):
+    """Return the household panel of a media page, or None."""
+    from sosoblue import household  # noqa: PLC0415
+
+    request = context.get("request")
+    media_type = _value(media, "media_type")
+    if (
+        request is None
+        or not request.user.is_authenticated
+        or _value(media, "source") != Sources.TMDB.value
+        or media_type not in ("tv", "season", "movie")
+    ):
+        return None
+    season = _value(media, "season_number") if media_type == "season" else None
+    return household.panel(
+        request.user,
+        media_type,
+        str(_value(media, "media_id")),
+        season,
+    )

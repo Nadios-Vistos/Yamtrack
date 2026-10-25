@@ -17,3 +17,49 @@
     };
   });
 </script>
+<script>
+  {# Keep the scroll position when a save or a delete reloads the page in place #}
+  {# htmx inserts the new body before removing the old one, and the browser's #}
+  {# scroll anchoring follows the old content down to the bottom of the page. #}
+  (function () {
+    var saved = null;
+    var target = null;
+    var attempts = 0;
+
+    function maxScroll() {
+      return document.documentElement.scrollHeight - window.innerHeight;
+    }
+
+    function restore() {
+      if (target === null) return;
+      var more = document.querySelector('[hx-trigger^="revealed"]');
+      if (maxScroll() >= target || attempts >= 10 || !more) {
+        window.scrollTo(0, Math.min(target, maxScroll()));
+        target = null;
+        return;
+      }
+      // The list was further down than its first page: let the infinite
+      // scroll load the next page, then try again.
+      attempts += 1;
+      window.scrollTo(0, maxScroll());
+    }
+
+    document.addEventListener("htmx:beforeSwap", function (event) {
+      if (event.detail.target === document.body) saved = window.scrollY;
+    });
+    document.addEventListener("htmx:afterSwap", function (event) {
+      if (event.detail.target === document.body && saved !== null) {
+        target = saved;
+        saved = null;
+        attempts = 0;
+        restore();
+        window.setTimeout(function () { target = null; }, 5000);
+      }
+    });
+    document.addEventListener("htmx:afterSettle", function (event) {
+      if (target !== null && event.detail.target !== document.body) {
+        window.requestAnimationFrame(restore);
+      }
+    });
+  })();
+</script>
