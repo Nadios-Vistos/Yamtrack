@@ -9,6 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.utils.dates import MONTHS, WEEKDAYS_ABBR
+from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
@@ -66,10 +68,11 @@ def calendar(request):
     )
     c = cal.Calendar(firstweekday=first_weekday)
     calendar_format = c.monthdayscalendar(year, month)
-    month_name = cal.month_name[month]
+    # Translated names, unlike the calendar module which follows the C locale
+    month_name = MONTHS[month]
 
     # Build weekday headers based on user preference
-    days = list(cal.day_abbr)
+    days = [capfirst(WEEKDAYS_ABBR[weekday]) for weekday in range(7)]
     sunday = 6
     weekday_headers = (
         [days[sunday], *days[0:sunday]] if first_weekday == sunday else days

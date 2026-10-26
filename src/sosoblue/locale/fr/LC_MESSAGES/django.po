@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 19:32+0100\n"
+"POT-Creation-Date: 2026-10-26 21:15+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -617,6 +617,16 @@ msgstr "Aucune de vos séries à jour n'a encore été renouvelée."
 #: templates/sosoblue/waiting.html:72
 msgid "Status not fetched yet"
 msgstr "Statut pas encore récupéré"
+
+#: upstream_strings.py:11
+#, python-format
+msgid "%(weekday)s, %(month_name)s %(day)s"
+msgstr "%(weekday)s %(day)s %(month_name)s"
+
+#: upstream_strings.py:12
+#, python-format
+msgid "%(number)s at %(time)s"
+msgstr "%(number)s à %(time)s"
 
 #: views.py:31
 msgid "Series statuses are being refreshed. Reload the page in a minute."
