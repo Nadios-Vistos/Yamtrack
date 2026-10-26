@@ -46,6 +46,9 @@ class SeriesStatus(models.Model):
     tmdb_status = models.CharField(max_length=40, blank=True, default="")
     last_air_date = models.DateField(null=True, blank=True)
     next_episode_season = models.PositiveIntegerField(null=True, blank=True)
+    genres = models.JSONField(default=list, blank=True)
+    # None until the genres have been fetched
+    is_animation = models.BooleanField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

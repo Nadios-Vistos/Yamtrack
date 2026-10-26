@@ -171,3 +171,18 @@ def ordered_sidebar_media_types(user):
         }
         for media_type in navigation.ordered_media_types(user)
     ]
+
+
+@register.simple_tag(takes_context=True)
+def animation_filter(context):
+    """Return the animation filter of the TV list, or None for other lists."""
+    from sosoblue import genres  # noqa: PLC0415
+
+    request = context.get("request")
+    if request is None or context.get("media_type") != MediaTypes.TV.value:
+        return None
+    return {
+        "current": genres.current(request),
+        "choices": list(genres.FILTERS.items()),
+        "missing": genres.backfill_if_needed(),
+    }

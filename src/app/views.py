@@ -35,6 +35,7 @@ from app.models import (
 from app.providers import manual, services, tmdb
 from app.templatetags import app_tags
 from events.models import Event
+from sosoblue import genres
 from users.models import (
     DateFormatChoices,
     HomeSortChoices,
@@ -225,6 +226,8 @@ def media_list(request, username, media_type):
         sort_filter=sort_filter,
         search=search_query,
     )
+    # SosoBlue: animation filter of the TV list
+    media_queryset = genres.apply(request, media_type, media_queryset)
 
     # Paginate results
     items_per_page = 32

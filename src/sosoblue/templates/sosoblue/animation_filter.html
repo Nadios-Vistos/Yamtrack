@@ -1,0 +1,13 @@
+{% load i18n sosoblue_tags %}
+{% animation_filter as sb_filter %}
+{% if sb_filter %}
+  <div class="sb-genre-filter">
+    {% for value, label in sb_filter.choices %}
+      <a href="?genre={{ value }}"
+         class="sb-genre-chip {% if sb_filter.current == value %}sb-genre-on{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  {% if sb_filter.missing and sb_filter.current != "all" %}
+    <p class="text-sm text-gray-400 mb-4">{% trans "The genres of some series are still being fetched. Reload the page in a minute." %}</p>
+  {% endif %}
+{% endif %}

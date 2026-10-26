@@ -16,6 +16,8 @@ from sosoblue.models import SeriesState, SeriesStatus, state_from_tmdb
 logger = logging.getLogger(__name__)
 
 WAITING_STATES = {SeriesState.ONGOING, SeriesState.IN_PRODUCTION}
+# TMDB genre names follow TMDB_LANG
+ANIMATION_GENRES = {"Animation", "Animazione", "Animación", "Animação", "Animatie"}
 
 
 def tracked_tv_items():
@@ -65,12 +67,15 @@ def refresh_series_status(items=None):
             continue
 
         details = metadata.get("details", {})
+        genres = metadata.get("genres") or []
         SeriesStatus.objects.update_or_create(
             item=item,
             defaults={
                 "tmdb_status": details.get("status") or "",
                 "last_air_date": _parse_date(details.get("last_air_date")),
                 "next_episode_season": metadata.get("next_episode_season"),
+                "genres": genres,
+                "is_animation": bool(ANIMATION_GENRES & set(genres)),
             },
         )
         updated += 1
