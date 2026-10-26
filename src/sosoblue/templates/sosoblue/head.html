@@ -1,8 +1,8 @@
-{% load static %}
+{% load static sosoblue_tags %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="preload" href="{% static 'sosoblue/fonts/manrope-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{% static 'sosoblue/sosoblue.css' %}">
-<link rel="stylesheet" href="{% static 'sosoblue/theme.css' %}">
+<link rel="stylesheet" href="{% sb_asset 'sosoblue/sosoblue.css' %}">
+<link rel="stylesheet" href="{% sb_asset 'sosoblue/theme.css' %}">
 {% load i18n %}
 <script>
   {# The search placeholder is built in JavaScript upstream, without translation #}

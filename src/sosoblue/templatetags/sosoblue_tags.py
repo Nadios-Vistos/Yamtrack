@@ -1,3 +1,7 @@
+import functools
+import hashlib
+from pathlib import Path
+
 from django import template
 
 from app.models import MediaTypes, Sources
@@ -186,3 +190,29 @@ def animation_filter(context):
         "choices": list(genres.FILTERS.items()),
         "missing": genres.backfill_if_needed(),
     }
+
+
+@functools.cache
+def _asset_version(path):
+    """Return a short hash of a static file, read once per process."""
+    from django.contrib.staticfiles import finders  # noqa: PLC0415
+
+    found = finders.find(path)
+    if not found:
+        return ""
+    with Path(found).open("rb") as file:
+        return hashlib.md5(file.read(), usedforsecurity=False).hexdigest()[:10]
+
+
+@register.simple_tag
+def sb_asset(path):
+    """Return the URL of a static file with its version.
+
+    nginx lets browsers keep static files for 30 days without checking, so
+    without the version an updated stylesheet would not reach them.
+    """
+    from django.templatetags.static import static  # noqa: PLC0415
+
+    version = _asset_version(path)
+    url = static(path)
+    return f"{url}?v={version}" if version else url

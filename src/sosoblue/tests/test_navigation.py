@@ -62,3 +62,15 @@ class NavigationTests(TestCase):
         user.anime_enabled = False
         user.save()
         self.assertEqual(navigation.chosen_tabs(user), ["home", "tv"])
+
+
+class AssetVersionTests(TestCase):
+    """Stylesheets carry their version so browsers fetch the new ones."""
+
+    def test_versioned(self):
+        """The URL ends with a hash of the file."""
+        from django.template import Context, Template  # noqa: PLC0415
+
+        html = Template("{% load sosoblue_tags %}{% sb_asset 'sosoblue/theme.css' %}")
+        url = html.render(Context())
+        self.assertRegex(url, r"sosoblue/theme\.css\?v=[0-9a-f]{10}$")
