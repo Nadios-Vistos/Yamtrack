@@ -1,0 +1,157 @@
+{% extends "users/base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% trans "Navigation" %} - Yamtrack
+{% endblock title %}
+
+{% block settings_content %}
+  {{ nav_state|json_script:"sb-nav-state" }}
+  <form method="post"
+        action="{% url 'sosoblue:navigation' %}"
+        class="space-y-6"
+        x-data="sbNavigation()">
+    {% csrf_token %}
+    <template x-for="key in chosen" :key="key">
+      <input type="hidden" name="tabs" :value="key">
+    </template>
+    <template x-for="key in media" :key="key">
+      <input type="hidden" name="media" :value="key">
+    </template>
+
+    <div class="bg-[#2a2f35] rounded-lg p-6">
+      <div class="flex items-center mb-2">
+        {% include "app/icons/hamburger.svg" with classes="w-6 h-6 text-indigo-400 mr-3" %}
+        <h2 class="text-xl font-semibold">{% trans "Phone tab bar" %}</h2>
+      </div>
+      <p class="text-gray-400 mb-4 text-sm">
+        {% blocktrans %}Choose the tabs at the bottom of the screen on a phone, from {{ min_tabs }} to {{ max_tabs }}, and their order. Everything else stays in the “More” menu.{% endblocktrans %}
+      </p>
+
+      <div class="sb-nav-preview" aria-hidden="true">
+        {% for tab in tabs %}
+          <span x-show="chosen.includes('{{ tab.key }}')" :style="{ order: pos('{{ tab.key }}') }">
+            {{ tab.svg }}
+            <span>{{ tab.label }}</span>
+          </span>
+        {% endfor %}
+        <span style="order: 99">
+          {% include "app/icons/hamburger.svg" with classes="" %}
+          <span>{% trans "More" %}</span>
+        </span>
+      </div>
+
+      <div class="sb-nav-list">
+        {% for tab in tabs %}
+          <div class="sb-nav-row"
+               :class="{ 'sb-nav-off': !chosen.includes('{{ tab.key }}') }"
+               :style="{ order: pos('{{ tab.key }}') }">
+            <label class="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
+              <input type="checkbox"
+                     class="sb-nav-check"
+                     :checked="chosen.includes('{{ tab.key }}')"
+                     :disabled="!chosen.includes('{{ tab.key }}') && chosen.length >= max"
+                     @change="toggle('{{ tab.key }}')">
+              <span class="sb-nav-icon">{{ tab.svg }}</span>
+              <span class="truncate">{{ tab.label }}</span>
+            </label>
+            <span class="flex gap-1" x-show="chosen.includes('{{ tab.key }}')">
+              <button type="button"
+                      class="sb-nav-move"
+                      :disabled="chosen.indexOf('{{ tab.key }}') === 0"
+                      @click="move(chosen, '{{ tab.key }}', -1)"
+                      title="{% trans 'Move up' %}">
+                {% include "app/icons/chevron-up.svg" with classes="w-4 h-4" %}
+              </button>
+              <button type="button"
+                      class="sb-nav-move"
+                      :disabled="chosen.indexOf('{{ tab.key }}') === chosen.length - 1"
+                      @click="move(chosen, '{{ tab.key }}', 1)"
+                      title="{% trans 'Move down' %}">
+                {% include "app/icons/chevron-down.svg" with classes="w-4 h-4" %}
+              </button>
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+      <p class="text-xs text-gray-400 mt-3"
+         x-show="chosen.length < min">
+        {% blocktrans %}Choose at least {{ min_tabs }} tabs.{% endblocktrans %}
+      </p>
+    </div>
+
+    {% if media|length > 1 %}
+      <div class="bg-[#2a2f35] rounded-lg p-6">
+        <div class="flex items-center mb-2">
+          {% include "app/icons/four-square.svg" with classes="w-6 h-6 text-indigo-400 mr-3" %}
+          <h2 class="text-xl font-semibold">{% trans "Media order in the menu" %}</h2>
+        </div>
+        <p class="text-gray-400 mb-4 text-sm">{% trans "The order of the media types in the side menu and in the “More” menu." %}</p>
+        <div class="sb-nav-list">
+          {% for item in media %}
+            <div class="sb-nav-row" :style="{ order: media.indexOf('{{ item.key }}') }">
+              <span class="flex items-center gap-3 flex-1 min-w-0">
+                <span class="sb-nav-icon">{{ item.svg }}</span>
+                <span class="truncate">{{ item.label }}</span>
+              </span>
+              <span class="flex gap-1">
+                <button type="button"
+                        class="sb-nav-move"
+                        :disabled="media.indexOf('{{ item.key }}') === 0"
+                        @click="move(media, '{{ item.key }}', -1)"
+                        title="{% trans 'Move up' %}">
+                  {% include "app/icons/chevron-up.svg" with classes="w-4 h-4" %}
+                </button>
+                <button type="button"
+                        class="sb-nav-move"
+                        :disabled="media.indexOf('{{ item.key }}') === media.length - 1"
+                        @click="move(media, '{{ item.key }}', 1)"
+                        title="{% trans 'Move down' %}">
+                  {% include "app/icons/chevron-down.svg" with classes="w-4 h-4" %}
+                </button>
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="flex justify-end">
+      <button type="submit"
+              :disabled="chosen.length < min"
+              class="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm cursor-pointer disabled:opacity-50">
+        {% include "app/icons/save.svg" with classes="w-4 h-4 mr-2" %}
+        {% trans "Save" %}
+      </button>
+    </div>
+  </form>
+
+  <script>
+    function sbNavigation() {
+      var state = JSON.parse(document.getElementById("sb-nav-state").textContent);
+      return {
+        all: state.all,
+        chosen: state.chosen,
+        media: state.media,
+        min: state.min,
+        max: state.max,
+        pos(key) {
+          var index = this.chosen.indexOf(key);
+          return index >= 0 ? index : 50 + this.all.indexOf(key);
+        },
+        toggle(key) {
+          var index = this.chosen.indexOf(key);
+          if (index >= 0) this.chosen.splice(index, 1);
+          else if (this.chosen.length < this.max) this.chosen.push(key);
+        },
+        move(list, key, delta) {
+          var index = list.indexOf(key);
+          var target = index + delta;
+          if (index < 0 || target < 0 || target >= list.length) return;
+          list.splice(index, 1);
+          list.splice(target, 0, key);
+        },
+      };
+    }
+  </script>
+{% endblock settings_content %}

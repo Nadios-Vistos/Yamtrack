@@ -1,6 +1,8 @@
 import datetime
 
+from django.conf import settings
 from django.urls import reverse
+from django.utils import translation
 
 from app.models import Item, MediaTypes, Sources
 from events.models import Event
@@ -16,6 +18,8 @@ class CalendarTranslationTests(HouseholdTestCase):
         super().setUp()
         self.nicolas.language = "fr"
         self.nicolas.save()
+        # The French the requests switch to must not leak into other tests
+        self.addCleanup(translation.activate, settings.LANGUAGE_CODE)
         self.client.force_login(self.nicolas)
         household.mark_episode(self.nicolas, SHOW_ID, 1, 1)
         season = Item.objects.get(

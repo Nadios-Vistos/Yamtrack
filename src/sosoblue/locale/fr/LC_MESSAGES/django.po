@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 21:40+0100\n"
+"POT-Creation-Date: 2026-10-26 21:50+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -68,6 +68,86 @@ msgstr "Annulation en cours"
 msgctxt "history import status"
 msgid "Undone"
 msgstr "Annulé"
+
+#: navigation.py:16
+msgctxt "tab bar"
+msgid "Series"
+msgstr "Séries"
+
+#: navigation.py:17
+msgctxt "tab bar"
+msgid "Seasons"
+msgstr "Saisons"
+
+#: navigation.py:18
+msgctxt "tab bar"
+msgid "Movies"
+msgstr "Films"
+
+#: navigation.py:19
+msgctxt "tab bar"
+msgid "Anime"
+msgstr "Animés"
+
+#: navigation.py:20
+msgctxt "tab bar"
+msgid "Manga"
+msgstr "Mangas"
+
+#: navigation.py:21
+msgctxt "tab bar"
+msgid "Games"
+msgstr "Jeux"
+
+#: navigation.py:22
+msgctxt "tab bar"
+msgid "Books"
+msgstr "Livres"
+
+#: navigation.py:23
+msgctxt "tab bar"
+msgid "Comics"
+msgstr "BD"
+
+#: navigation.py:24
+msgctxt "tab bar"
+msgid "Board games"
+msgstr "Jeux soc."
+
+#: navigation.py:29
+msgctxt "tab bar"
+msgid "Home"
+msgstr "Accueil"
+
+#: navigation.py:31
+msgctxt "tab bar"
+msgid "Up next"
+msgstr "À suivre"
+
+#: navigation.py:36
+msgctxt "tab bar"
+msgid "Household"
+msgstr "Foyer"
+
+#: navigation.py:41
+msgctxt "tab bar"
+msgid "Calendar"
+msgstr "Calendrier"
+
+#: navigation.py:45
+msgctxt "tab bar"
+msgid "Lists"
+msgstr "Listes"
+
+#: navigation.py:47
+msgctxt "tab bar"
+msgid "Statistics"
+msgstr "Stats"
+
+#: navigation.py:51
+msgctxt "tab bar"
+msgid "Journal"
+msgstr "Journal"
 
 #: people.py:31
 msgctxt "person department"
@@ -230,8 +310,8 @@ msgstr[1] "%(counter)s titres trouvés."
 
 #: templates/sosoblue/history_detail.html:41
 msgid ""
-"Check the ones at the top (not found, unrecognised episodes or above the age "
-"limit), correct them with a TMDB link or leave them out, then import."
+"Check the ones at the top (not found, unrecognised episodes or above the age"
+" limit), correct them with a TMDB link or leave them out, then import."
 msgstr ""
 "Vérifiez ceux du haut (introuvables, épisodes non reconnus ou au-dessus de "
 "la limite d'âge), corrigez-les avec un lien TMDB ou laissez-les de côté, "
@@ -377,8 +457,8 @@ msgstr "Analyser"
 
 #: templates/sosoblue/history_list.html:56
 msgid ""
-"The CSV produced by the export script on the Prime Video history page (watch-"
-"history-export-….csv)."
+"The CSV produced by the export script on the Prime Video history page "
+"(watch-history-export-….csv)."
 msgstr ""
 "Le CSV produit par le script d'export sur la page d'historique de Prime "
 "Video (watch-history-export-….csv)."
@@ -389,8 +469,8 @@ msgid ""
 "Plex, open any movie, ⋯ → Get Info → View XML, and copy what follows X-Plex-"
 "Token= in the address bar."
 msgstr ""
-"Le serveur garde l'historique de chaque profil Plex. Pour trouver le jeton : "
-"dans Plex, ouvrez n'importe quel film, ⋯ → Obtenir des infos → Afficher le "
+"Le serveur garde l'historique de chaque profil Plex. Pour trouver le jeton :"
+" dans Plex, ouvrez n'importe quel film, ⋯ → Obtenir des infos → Afficher le "
 "XML, et copiez ce qui suit X-Plex-Token= dans la barre d'adresse."
 
 #: templates/sosoblue/history_list.html:86
@@ -443,7 +523,7 @@ msgstr "Aujourd'hui"
 
 #: templates/sosoblue/household.html:5 templates/sosoblue/household.html:10
 #: templates/sosoblue/household_panel.html:4
-#: templates/sosoblue/sidebar_links.html:23 templates/sosoblue/tab_bar.html:22
+#: templates/sosoblue/sidebar_links.html:23
 msgid "Household"
 msgstr "Foyer"
 
@@ -513,6 +593,7 @@ msgid "Up to %(age)s+"
 msgstr "Jusqu'à %(age)s+"
 
 #: templates/sosoblue/household.html:134
+#: templates/sosoblue/navigation.html:124
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -634,6 +715,53 @@ msgstr ""
 "Importer un historique de visionnage, avec une vérification de ce qui a été "
 "reconnu."
 
+#: templates/sosoblue/navigation.html:5
+#: templates/sosoblue/settings_link.html:6
+msgid "Navigation"
+msgstr "Navigation"
+
+#: templates/sosoblue/navigation.html:25
+msgid "Phone tab bar"
+msgstr "Barre d’onglets du téléphone"
+
+#: templates/sosoblue/navigation.html:28
+#, python-format
+msgid ""
+"Choose the tabs at the bottom of the screen on a phone, from %(min_tabs)s to"
+" %(max_tabs)s, and their order. Everything else stays in the “More” menu."
+msgstr ""
+"Choisissez les onglets en bas de l’écran sur téléphone, de %(min_tabs)s à "
+"%(max_tabs)s, et leur ordre. Les autres pages restent accessibles dans le "
+"menu « Plus »."
+
+#: templates/sosoblue/navigation.html:40 templates/sosoblue/tab_bar.html:13
+msgid "More"
+msgstr "Plus"
+
+#: templates/sosoblue/navigation.html:63
+#: templates/sosoblue/navigation.html:102
+msgid "Move up"
+msgstr "Monter"
+
+#: templates/sosoblue/navigation.html:70
+#: templates/sosoblue/navigation.html:109
+msgid "Move down"
+msgstr "Descendre"
+
+#: templates/sosoblue/navigation.html:79
+#, python-format
+msgid "Choose at least %(min_tabs)s tabs."
+msgstr "Choisissez au moins %(min_tabs)s onglets."
+
+#: templates/sosoblue/navigation.html:87
+msgid "Media order in the menu"
+msgstr "Ordre des médias dans le menu"
+
+#: templates/sosoblue/navigation.html:89
+msgid "The order of the media types in the side menu and in the “More” menu."
+msgstr ""
+"L’ordre des types de médias dans le menu latéral et dans le menu « Plus »."
+
 #: templates/sosoblue/people_strip.html:5
 msgid "People"
 msgstr "Personnes"
@@ -671,27 +799,14 @@ msgstr "Profil Plex à importer"
 msgid "No profile found on this server."
 msgstr "Aucun profil trouvé sur ce serveur."
 
-#: templates/sosoblue/sidebar_links.html:11 templates/sosoblue/tab_bar.html:18
-#: templates/sosoblue/waiting.html:5 templates/sosoblue/waiting.html:11
+#: templates/sosoblue/sidebar_links.html:11 templates/sosoblue/waiting.html:5
+#: templates/sosoblue/waiting.html:11
 msgid "Up next"
 msgstr "À suivre"
 
-#: templates/sosoblue/tab_bar.html:6
+#: templates/sosoblue/tab_bar.html:4
 msgid "Main navigation"
 msgstr "Navigation principale"
-
-#: templates/sosoblue/tab_bar.html:9
-msgid "Home"
-msgstr "Accueil"
-
-#: templates/sosoblue/tab_bar.html:14
-msgctxt "tab bar"
-msgid "Series"
-msgstr "Séries"
-
-#: templates/sosoblue/tab_bar.html:26
-msgid "More"
-msgstr "Plus"
 
 #: templates/sosoblue/waiting.html:12
 msgid "Series you are up to date on, waiting for new episodes."
@@ -757,35 +872,44 @@ msgstr "%(number)s à %(time)s"
 msgid "Movies and series with %(name)s"
 msgstr "Films et séries avec %(name)s"
 
-#: views.py:31
+#: views.py:35
 msgid "Series statuses are being refreshed. Reload the page in a minute."
 msgstr ""
-"Les statuts des séries sont en cours d'actualisation. Rechargez la page dans "
-"une minute."
+"Les statuts des séries sont en cours d'actualisation. Rechargez la page dans"
+" une minute."
 
-#: views.py:59
+#: views.py:63
 msgid "Household settings saved."
 msgstr "Réglages du foyer enregistrés."
 
-#: views.py:74
+#: views.py:78
 #, python-format
 msgid "Type the name %(name)s exactly to confirm."
 msgstr "Tapez exactement le nom %(name)s pour confirmer."
 
-#: views.py:81
+#: views.py:85
 #, python-format
 msgid ""
-"%(name)s's account was emptied: %(shows)s series (%(episodes)s episodes) and "
-"%(movies)s movies removed."
+"%(name)s's account was emptied: %(shows)s series (%(episodes)s episodes) and"
+" %(movies)s movies removed."
 msgstr ""
 "Le compte de %(name)s a été vidé : %(shows)s séries (%(episodes)s épisodes) "
 "et %(movies)s films supprimés."
 
-#: views.py:97
+#: views.py:101
 msgid "Anime are being moved. A message will tell you which ones when done."
 msgstr ""
 "Rangement des animés en cours. Un message vous dira lesquels une fois "
 "terminé."
+
+#: views.py:244
+msgid "Navigation saved."
+msgstr "Navigation enregistrée."
+
+#: views.py:248
+#, python-format
+msgid "Choose between %(min)s and %(max)s tabs."
+msgstr "Choisissez entre %(min)s et %(max)s onglets."
 
 #: views_history.py:76
 msgid "Enter the server address (starting with http://) and the token."

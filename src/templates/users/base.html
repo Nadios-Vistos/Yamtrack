@@ -26,6 +26,8 @@
               <span>{% trans "Preferences" %}</span>
             </a>
 
+            {% include "sosoblue/settings_link.html" %}
+
             {% url 'notifications' as notifications_url %}
             <a href="{{ notifications_url }}"
                class="w-full flex items-center space-x-3 px-2 py-2 rounded-md transition-colors text-left border-l-2 cursor-pointer text-sm {% if request.path == notifications_url %}bg-[#39404b] text-white border-indigo-500{% else %}text-gray-400 border-transparent hover:bg-[#313842] hover:text-white{% endif %}">

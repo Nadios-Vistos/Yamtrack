@@ -1,26 +1,13 @@
-{% load i18n app_tags %}
+{% load i18n sosoblue_tags %}
 {% if user.is_authenticated %}
-  {% url 'home' as home_url %}
-  {% url 'sosoblue:waiting' as waiting_url %}
-  {% url 'sosoblue:household' as household_url %}
+  {% navigation_tabs as tabs %}
   <nav class="sb-tabbar" aria-label="{% trans 'Main navigation' %}">
-    <a href="{{ home_url }}" class="{% if request.path == home_url %}sb-tab-on{% endif %}">
-      {% include "app/icons/house.svg" with classes="" %}
-      <span>{% trans "Home" %}</span>
-    </a>
-    <a href="{% url 'medialist' username=user.username media_type='tv' %}"
-       class="{% if media_type == 'tv' or media_type == 'season' %}sb-tab-on{% endif %}">
-      {% icon "tv" is_active=False extra_classes="" %}
-      <span>{% trans "Series" context "tab bar" %}</span>
-    </a>
-    <a href="{{ waiting_url }}" class="{% if request.path == waiting_url %}sb-tab-on{% endif %}">
-      {% include "app/icons/alarm-clock.svg" with classes="" %}
-      <span>{% trans "Up next" %}</span>
-    </a>
-    <a href="{{ household_url }}" class="{% if request.path == household_url %}sb-tab-on{% endif %}">
-      {% include "app/icons/persons.svg" with classes="" %}
-      <span>{% trans "Household" %}</span>
-    </a>
+    {% for tab in tabs %}
+      <a href="{{ tab.url }}" class="{% if tab.active %}sb-tab-on{% endif %}">
+        {{ tab.svg }}
+        <span>{{ tab.label }}</span>
+      </a>
+    {% endfor %}
     <button type="button" @click="isMobileMenuOpen = true">
       {% include "app/icons/hamburger.svg" with classes="" %}
       <span>{% trans "More" %}</span>

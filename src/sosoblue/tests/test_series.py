@@ -2,11 +2,12 @@ import datetime
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 
 from app.models import TV, Episode, Item, MediaTypes, Season, Sources, Status
 from events.models import Event, SentinelDatetime
@@ -303,6 +304,7 @@ class ViewTests(SeriesTestCase):
         """The page is translated."""
         self.user.language = "fr"
         self.user.save(update_fields=["language"])
+        self.addCleanup(translation.activate, settings.LANGUAGE_CODE)
         response = self.client.get(reverse("sosoblue:waiting"))
         self.assertContains(response, "À suivre")
 

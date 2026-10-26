@@ -90,7 +90,7 @@
                   </a>
                 </li>
 
-                {% get_sidebar_media_types user as sidebar_media_types %}
+                {% load sosoblue_tags %}{% ordered_sidebar_media_types user as sidebar_media_types %}
                 {% for item in sidebar_media_types %}
                   <li>
                     {% if target_user is None or target_user == request.user %}

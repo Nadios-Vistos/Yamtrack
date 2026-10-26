@@ -20,6 +20,11 @@ urlpatterns = [
     path("household/panel/", views.household_panel, name="household_panel"),
     path("household/toggle/", views.household_toggle, name="household_toggle"),
     path("household/align/", views.household_align, name="household_align"),
+    path(
+        "settings/navigation/",
+        views.navigation_settings,
+        name="navigation",
+    ),
     path("person/<int:person_id>/", views_people.person_page, name="person"),
     path("history/", views_history.history_list, name="history_list"),
     path("history/start/", views_history.history_start, name="history_start"),

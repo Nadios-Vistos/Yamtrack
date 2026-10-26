@@ -3,7 +3,11 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import (
+    require_GET,
+    require_http_methods,
+    require_POST,
+)
 
 from app.models import MediaTypes
 from sosoblue import home, household, ratings, series, tasks
@@ -224,3 +228,49 @@ def home_mark(request):
         response["HX-Refresh"] = "true"
         return response
     return _render_home_top(request)
+
+
+@require_http_methods(["GET", "POST"])
+def navigation_settings(request):
+    """Choose the tabs of the phone tab bar and the order of the media types."""
+    from sosoblue import navigation  # noqa: PLC0415
+
+    if request.method == "POST":
+        if navigation.save(
+            request.user,
+            request.POST.getlist("tabs"),
+            request.POST.getlist("media"),
+        ):
+            messages.success(request, _("Navigation saved."))
+        else:
+            messages.error(
+                request,
+                _("Choose between %(min)s and %(max)s tabs.")
+                % {"min": navigation.MIN_TABS, "max": navigation.MAX_TABS},
+            )
+        return redirect("sosoblue:navigation")
+
+    available = navigation.available_tabs(request.user)
+    chosen = navigation.chosen_tabs(request.user)
+    order = chosen + [key for key in available if key not in chosen]
+    media = navigation.ordered_media_types(request.user)
+    context = {
+        "tabs": [
+            {"key": key, "label": available[key][0], "svg": available[key][1]}
+            for key in order
+        ],
+        "media": [
+            {"key": key, "label": available[key][0], "svg": available[key][1]}
+            for key in media
+        ],
+        "min_tabs": navigation.MIN_TABS,
+        "max_tabs": navigation.MAX_TABS,
+        "nav_state": {
+            "all": order,
+            "chosen": chosen,
+            "media": media,
+            "min": navigation.MIN_TABS,
+            "max": navigation.MAX_TABS,
+        },
+    }
+    return render(request, "sosoblue/navigation.html", context)

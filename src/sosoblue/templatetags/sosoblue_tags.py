@@ -145,3 +145,29 @@ def people_matches(context):
     for match in matches:
         match["department_label"] = people.department_label(match["department"])
     return matches
+
+
+@register.simple_tag(takes_context=True)
+def navigation_tabs(context):
+    """Return the tabs of the phone tab bar, in the user's order."""
+    from sosoblue import navigation  # noqa: PLC0415
+
+    request = context.get("request")
+    if request is None or not request.user.is_authenticated:
+        return []
+    return navigation.tab_bar(request.user, request.path, context.get("media_type"))
+
+
+@register.simple_tag
+def ordered_sidebar_media_types(user):
+    """Return the sidebar media types in the user's order."""
+    from app.templatetags.app_tags import media_type_readable_plural  # noqa: PLC0415
+    from sosoblue import navigation  # noqa: PLC0415
+
+    return [
+        {
+            "media_type": media_type,
+            "display_name": media_type_readable_plural(media_type),
+        }
+        for media_type in navigation.ordered_media_types(user)
+    ]

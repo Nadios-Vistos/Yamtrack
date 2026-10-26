@@ -227,3 +227,24 @@ class ImportLine(models.Model):
     def __str__(self):
         """Return the raw line."""
         return self.raw
+
+
+def default_tabs():
+    """Return the tabs of the phone tab bar before any change."""
+    return ["home", "tv", "up_next", "household"]
+
+
+class NavigationSettings(models.Model):
+    """A user's phone tab bar and order of the media types in the menu."""
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sosoblue_navigation",
+    )
+    tabs = models.JSONField(default=default_tabs)
+    media_order = models.JSONField(default=list)
+
+    def __str__(self):
+        """Return the user and their tabs."""
+        return f"{self.user}: {', '.join(self.tabs)}"
