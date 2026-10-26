@@ -10,4 +10,6 @@ STRINGS = [
     # templates/events/components/calendar_list.html
     gettext_noop("%(weekday)s, %(month_name)s %(day)s"),
     gettext_noop("%(number)s at %(time)s"),
+    # templates/app/components/cast_card.html
+    gettext_noop("Movies and series with %(name)s"),
 ]

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from sosoblue import views, views_history
+from sosoblue import views, views_history, views_people
 
 app_name = "sosoblue"
 
@@ -20,6 +20,7 @@ urlpatterns = [
     path("household/panel/", views.household_panel, name="household_panel"),
     path("household/toggle/", views.household_toggle, name="household_toggle"),
     path("household/align/", views.household_align, name="household_align"),
+    path("person/<int:person_id>/", views_people.person_page, name="person"),
     path("history/", views_history.history_list, name="history_list"),
     path("history/start/", views_history.history_start, name="history_start"),
     path("history/plex/", views_history.plex_accounts, name="plex_accounts"),

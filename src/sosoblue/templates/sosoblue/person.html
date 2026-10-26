@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load i18n app_tags %}
+
+{% block title %}
+  {{ person.name }} - YamTrack
+{% endblock title %}
+
+{% block content %}
+  <div x-data="{ mine: false }">
+    <div class="sb-person">
+      <img alt="{{ person.name }}"
+           class="sb-person-photo"
+           src="{{ person.image }}">
+      <div class="min-w-0">
+        <h1 class="text-3xl font-bold mb-1">{{ person.name }}</h1>
+        <p class="text-gray-400">
+          {{ department }}
+          {% if person.birthday %}
+            · {% blocktrans with date=person.birthday|iso_date_format:user %}born {{ date }}{% endblocktrans %}
+          {% endif %}
+          {% if person.deathday %}
+            · {% blocktrans with date=person.deathday|iso_date_format:user %}died {{ date }}{% endblocktrans %}
+          {% endif %}
+        </p>
+        {% if person.place_of_birth %}<p class="text-sm text-gray-400">{{ person.place_of_birth }}</p>{% endif %}
+        <a href="https://www.themoviedb.org/person/{{ person.id }}"
+           target="_blank"
+           rel="noopener"
+           class="inline-flex items-center gap-1 mt-2 text-sm text-indigo-400 hover:underline">
+          {% trans "TMDB page" %}
+          {% include "app/icons/external-link.svg" with classes="w-4 h-4" %}
+        </a>
+      </div>
+    </div>
+
+    {% if person.biography %}
+      <details class="sb-person-bio">
+        <summary>{{ person.biography|truncatewords:40 }}</summary>
+        <p>{{ person.biography|linebreaksbr }}</p>
+      </details>
+    {% endif %}
+
+    {% if tracked_count %}
+      <label class="sb-person-filter">
+        <input type="checkbox" x-model="mine">
+        {% blocktrans count counter=tracked_count %}Only the {{ counter }} title in my tracking{% plural %}Only the {{ counter }} titles in my tracking{% endblocktrans %}
+      </label>
+    {% endif %}
+
+    {% for section_title, entries in sections %}
+      {% if entries %}
+        <section class="sb-section">
+          <h2 class="text-xl font-bold mb-4">
+            {{ section_title }}
+            <span class="text-base font-normal text-gray-400">({{ entries|length }})</span>
+          </h2>
+          <div class="media-grid">
+            {% for entry in entries %}
+              <div {% if not entry.media %}x-show="!mine"{% endif %}>
+                {% include "app/components/media_card.html" with item=entry.item title=entry.item.title media=entry.media %}
+                <span class="sb-next">
+                  {% if entry.roles_label %}<strong>{{ entry.roles_label }}</strong>{% endif %}
+                  {% if entry.episodes %}
+                    <span class="block text-xs text-gray-400">
+                      {% blocktrans count counter=entry.episodes %}{{ counter }} episode{% plural %}{{ counter }} episodes{% endblocktrans %}
+                    </span>
+                  {% endif %}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    {% endfor %}
+
+    {% if not shows and not movies %}
+      <p class="text-gray-400">{% trans "No movie or series found for this person." %}</p>
+    {% endif %}
+  </div>
+{% endblock content %}

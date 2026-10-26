@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yamtrack SosoBlue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 21:26+0100\n"
+"POT-Creation-Date: 2026-10-26 21:40+0100\n"
 "PO-Revision-Date: 2026-10-25 13:30+0100\n"
 "Last-Translator: Nicolas (Nadios-Vistos)\n"
 "Language-Team: French\n"
@@ -68,6 +68,101 @@ msgstr "Annulation en cours"
 msgctxt "history import status"
 msgid "Undone"
 msgstr "Annulé"
+
+#: people.py:31
+msgctxt "person department"
+msgid "Actor"
+msgstr "Acteur ou actrice"
+
+#: people.py:32
+msgctxt "person department"
+msgid "Director"
+msgstr "Réalisation"
+
+#: people.py:33
+msgctxt "person department"
+msgid "Writer"
+msgstr "Scénario"
+
+#: people.py:34
+msgctxt "person department"
+msgid "Producer"
+msgstr "Production"
+
+#: people.py:35
+msgctxt "person department"
+msgid "Creator"
+msgstr "Création"
+
+#: people.py:36
+msgctxt "person department"
+msgid "Sound"
+msgstr "Son"
+
+#: people.py:37
+msgctxt "person department"
+msgid "Cinematographer"
+msgstr "Image"
+
+#: people.py:38
+msgctxt "person department"
+msgid "Editor"
+msgstr "Montage"
+
+#: people.py:41
+msgctxt "crew job"
+msgid "Director"
+msgstr "Réalisation"
+
+#: people.py:42
+msgctxt "crew job"
+msgid "Writer"
+msgstr "Scénario"
+
+#: people.py:43
+msgctxt "crew job"
+msgid "Screenplay"
+msgstr "Scénario"
+
+#: people.py:44
+msgctxt "crew job"
+msgid "Story"
+msgstr "Histoire"
+
+#: people.py:45
+msgctxt "crew job"
+msgid "Novel"
+msgstr "Roman"
+
+#: people.py:46
+msgctxt "crew job"
+msgid "Creator"
+msgstr "Création"
+
+#: people.py:47
+msgctxt "crew job"
+msgid "Producer"
+msgstr "Production"
+
+#: people.py:48
+msgctxt "crew job"
+msgid "Executive producer"
+msgstr "Production exécutive"
+
+#: people.py:49
+msgctxt "crew job"
+msgid "Music"
+msgstr "Musique"
+
+#: people.py:50
+msgctxt "crew job"
+msgid "Cinematography"
+msgstr "Image"
+
+#: people.py:51
+msgctxt "crew job"
+msgid "Editing"
+msgstr "Montage"
 
 #: tasks.py:63
 msgid "The anime list could not be downloaded. Try again later."
@@ -360,7 +455,7 @@ msgstr "Ce que chacun regarde, et les séries que vous suivez ensemble."
 msgid "Lately"
 msgstr "Ces derniers temps"
 
-#: templates/sosoblue/household.html:40
+#: templates/sosoblue/household.html:40 templates/sosoblue/person.html:65
 #, python-format
 msgid "%(counter)s episode"
 msgid_plural "%(counter)s episodes"
@@ -539,6 +634,35 @@ msgstr ""
 "Importer un historique de visionnage, avec une vérification de ce qui a été "
 "reconnu."
 
+#: templates/sosoblue/people_strip.html:5
+msgid "People"
+msgstr "Personnes"
+
+#: templates/sosoblue/person.html:19
+#, python-format
+msgid "born %(date)s"
+msgstr "né(e) le %(date)s"
+
+#: templates/sosoblue/person.html:22
+#, python-format
+msgid "died %(date)s"
+msgstr "mort(e) le %(date)s"
+
+#: templates/sosoblue/person.html:30
+msgid "TMDB page"
+msgstr "Page TMDB"
+
+#: templates/sosoblue/person.html:46
+#, python-format
+msgid "Only the %(counter)s title in my tracking"
+msgid_plural "Only the %(counter)s titles in my tracking"
+msgstr[0] "Seulement le titre que je suis"
+msgstr[1] "Seulement les %(counter)s titres que je suis"
+
+#: templates/sosoblue/person.html:77
+msgid "No movie or series found for this person."
+msgstr "Aucun film ni série trouvé pour cette personne."
+
 #: templates/sosoblue/plex_accounts.html:6
 msgid "Plex profile to import"
 msgstr "Profil Plex à importer"
@@ -628,6 +752,11 @@ msgstr "%(weekday)s %(day)s %(month_name)s"
 msgid "%(number)s at %(time)s"
 msgstr "%(number)s à %(time)s"
 
+#: upstream_strings.py:14
+#, python-format
+msgid "Movies and series with %(name)s"
+msgstr "Films et séries avec %(name)s"
+
 #: views.py:31
 msgid "Series statuses are being refreshed. Reload the page in a minute."
 msgstr ""
@@ -687,3 +816,13 @@ msgstr "Collez un lien TMDB, par exemple https://www.themoviedb.org/tv/1399"
 #: views_history.py:259
 msgid "Nothing found on TMDB with this link."
 msgstr "Rien trouvé sur TMDB avec ce lien."
+
+#: views_people.py:44
+msgctxt "person page section"
+msgid "Series"
+msgstr "Séries"
+
+#: views_people.py:45
+msgctxt "person page section"
+msgid "Movies"
+msgstr "Films"

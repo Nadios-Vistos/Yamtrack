@@ -468,3 +468,78 @@ textarea { font-family: inherit; }
     margin: 0.625rem 0 0 1.75rem;
   }
 }
+
+/* People: search strip and person page */
+.sb-people { margin-bottom: 1.75rem; }
+.sb-people-row {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 0.25rem;
+}
+.sb-people-row::-webkit-scrollbar { display: none; }
+.sb-people-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+  width: 15rem;
+  padding: 0.5rem;
+  border-radius: 0.875rem;
+  background-color: var(--sb-card);
+  transition: background-color 0.15s;
+}
+.sb-people-card:hover { background-color: var(--sb-card-2); }
+.sb-people-card img {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  object-fit: cover;
+  background-color: var(--sb-card-2);
+}
+
+.sb-person {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.sb-person-photo {
+  width: 7.5rem;
+  aspect-ratio: 2 / 3;
+  flex-shrink: 0;
+  border-radius: 1rem;
+  object-fit: cover;
+  background-color: var(--sb-card-2);
+  box-shadow: 0 12px 28px -10px rgb(0 0 0 / 0.7);
+}
+.sb-person-bio {
+  max-width: 50rem;
+  margin-bottom: 1.25rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #c7c9d1;
+  background-color: var(--sb-card);
+}
+.sb-person-bio summary { cursor: pointer; list-style: none; }
+.sb-person-bio summary::-webkit-details-marker { display: none; }
+.sb-person-bio[open] summary { display: none; }
+.sb-person-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.sb-person-filter input { accent-color: var(--sb-accent); width: 1rem; height: 1rem; }
+
+@media (max-width: 767px) {
+  .sb-person { align-items: flex-end; gap: 1rem; }
+  .sb-person-photo { width: 6rem; }
+  .sb-person h1 { font-size: 1.5rem; line-height: 1.2; }
+}

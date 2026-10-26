@@ -1,0 +1,18 @@
+{% load i18n sosoblue_tags %}
+{% people_matches as matches %}
+{% if matches %}
+  <section class="sb-people">
+    <h3 class="text-sm font-semibold text-gray-400 mb-3">{% trans "People" %}</h3>
+    <div class="sb-people-row">
+      {% for match in matches %}
+        <a href="{% url 'sosoblue:person' match.id %}" class="sb-people-card">
+          <img alt="{{ match.name }}" src="{{ match.image }}" loading="lazy">
+          <span class="min-w-0">
+            <span class="block font-medium line-clamp-1">{{ match.name }}</span>
+            <span class="block text-xs text-gray-400 line-clamp-1">{{ match.department_label }}{% if match.known_for %} · {{ match.known_for|join:", " }}{% endif %}</span>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}

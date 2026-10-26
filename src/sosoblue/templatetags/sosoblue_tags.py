@@ -126,3 +126,22 @@ def household_panel_context(context, media):
         str(_value(media, "media_id")),
         season,
     )
+
+
+@register.simple_tag(takes_context=True)
+def people_matches(context):
+    """Return the people matching a movie or TV search, on its first page."""
+    from sosoblue import people  # noqa: PLC0415
+
+    request = context.get("request")
+    searched = context.get("media_type")
+    if (
+        request is None
+        or searched not in (MediaTypes.TV.value, MediaTypes.MOVIE.value)
+        or request.GET.get("page", "1") != "1"
+    ):
+        return []
+    matches = people.search(request.GET.get("q", ""))
+    for match in matches:
+        match["department_label"] = people.department_label(match["department"])
+    return matches
