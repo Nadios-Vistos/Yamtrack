@@ -63,3 +63,12 @@
     });
   })();
 </script>
+<script>
+  {# Settings menu on phones: bring the current page's chip into view #}
+  document.addEventListener("DOMContentLoaded", function () {
+    var active = document.querySelector("main .md\\:w-64 > div > nav > a.border-indigo-500");
+    if (active && active.parentElement.scrollWidth > active.parentElement.clientWidth) {
+      active.parentElement.scrollLeft = active.offsetLeft - active.parentElement.offsetLeft - 16;
+    }
+  });
+</script>

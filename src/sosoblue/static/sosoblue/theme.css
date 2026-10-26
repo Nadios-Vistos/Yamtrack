@@ -409,3 +409,62 @@ textarea { font-family: inherit; }
     background-color: var(--sb-card-2);
   }
 }
+
+/* Settings on phones */
+
+/* Info bubbles open towards the left, so they never widen the page */
+.group > .absolute.bottom-full.w-60 { right: -0.5rem; max-width: calc(100vw - 2rem); }
+
+@media (max-width: 767px) {
+  main .md\:w-64.shrink-0:has(> div > nav) + .flex-1 svg { flex-shrink: 0; }
+  main .flex.flex-col.md\:flex-row.gap-8:has(> .md\:w-64 > div > nav) { gap: 1.25rem; }
+
+  /* The menu becomes a row of chips that scrolls sideways */
+  main .md\:w-64.shrink-0 > div:has(> nav) {
+    position: static;
+    overflow: visible;
+    background: none;
+  }
+  main .md\:w-64.shrink-0 > div > nav {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  main .md\:w-64.shrink-0 > div > nav::-webkit-scrollbar { display: none; }
+  main .md\:w-64.shrink-0 > div > nav > a {
+    width: auto;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0.5rem 0.875rem;
+    gap: 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    white-space: nowrap;
+    background-color: var(--sb-card);
+  }
+  main .md\:w-64.shrink-0 > div > nav > a > * { margin: 0; }
+  main .md\:w-64.shrink-0 > div > nav > a.border-indigo-500 {
+    color: #fff;
+    background-color: var(--sb-accent);
+  }
+
+  /* Less nested padding, more room for the text */
+  main .md\:w-64.shrink-0 + .flex-1 .p-6 { padding: 1rem; }
+  main .md\:w-64.shrink-0 + .flex-1 .p-5 { padding: 0.875rem; }
+  main .md\:w-64.shrink-0 + .flex-1 input::placeholder { font-size: 0.8125rem; }
+
+  /* A setting with a list: the list goes under its description */
+  main .md\:w-64.shrink-0 + .flex-1 .flex.items-center.justify-between:has(> select) {
+    flex-wrap: wrap;
+  }
+  main .md\:w-64.shrink-0 + .flex-1 .flex.items-center.justify-between:has(> select) > .flex-1 {
+    flex-basis: 100%;
+  }
+  main .md\:w-64.shrink-0 + .flex-1 .flex.items-center.justify-between > select {
+    width: calc(100% - 1.75rem);
+    margin: 0.625rem 0 0 1.75rem;
+  }
+}
